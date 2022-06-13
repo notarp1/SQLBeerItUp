@@ -1,4 +1,4 @@
-use BeerItUp;
+use beeritup;
 
 CREATE TABLE if not exists Users
 (
@@ -48,7 +48,7 @@ CREATE TABLE if not exists KitchenUsers
 
 
 
-CREATE TABLE if not exists Refrigerators
+CREATE TABLE if not exists Beverages
 (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     beverageTypeId INT NOT NULL,

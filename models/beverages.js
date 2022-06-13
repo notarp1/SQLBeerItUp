@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../config/database')
 
-const Refrigerator = db.define('Refrigerator', {
+const Beverages = db.define('Beverage', {
     // Model attributes are defined here
     
     beverageTypeId: {
@@ -28,14 +28,15 @@ const Refrigerator = db.define('Refrigerator', {
       type: DataTypes.DATE,
       allowNull: true
     },
+    beverageDrinkerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     settleDate: {
         type: DataTypes.DATE,
         allowNull: true
     },
-    removedAt: {
-        type: DataTypes.DATE,
-        allowNull: true
-      }
+   
 
   }, {
 
@@ -43,4 +44,4 @@ const Refrigerator = db.define('Refrigerator', {
   timestamps: false
   });
   
-module.exports = Refrigerator
+module.exports = Beverages

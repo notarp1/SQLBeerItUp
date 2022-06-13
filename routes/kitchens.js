@@ -2,12 +2,13 @@ const express = require('express')
 const kitchenRouter = express.Router()
 
 const kitchenController = require('../controllers/kitchenController')
-const fridgeController = require('../controllers/refrigeratorController')
+const beverageController = require('../controllers/beverageController')
+const logController = require('../controllers/logController')
+
 
 kitchenRouter.route('/')
-.get(kitchenController.getKitchenList)
+.get(kitchenController.getAllKitchens)
 .post(kitchenController.createKitchen)
-
 
 
 
@@ -26,23 +27,34 @@ kitchenRouter.route('/:id/users/add/:uId')
 .post(kitchenController.postKitchenUser)
 
 
+kitchenRouter.route('/:id/beverages/price-calculation')
+.post(beverageController.calculateBeverageCostSequential)
 
+kitchenRouter.route('/:id/beverages/transaction-accepted/:uId')
+.post(beverageController.onBeverageTransactionAccept)
 
-kitchenRouter.route('/:id/beverages/in-stock')
-.get(fridgeController.getBeveragesInStock)
+kitchenRouter.route('/:id/beverages/:type/in-stock')
+.get(beverageController.getBeveragesInStock)
 
 kitchenRouter.route('/:id/beverages')
-.get(fridgeController.getBeverages)
+.get(beverageController.getBeverages)
 
-kitchenRouter.route('/:id/beverage-types')
-.get(fridgeController.getBeverageTypes)
+kitchenRouter.route('/:id/beverages/all/:type')
+.get(beverageController.getBeverageTypes)
 
 kitchenRouter.route('/:id/beverages/add/:beverage')
-.post(fridgeController.addBeverages)
+.post(beverageController.addBeverages)
 
 kitchenRouter.route('/:id/beverages/get/:beverageId')
-.get(fridgeController.getSpecificBeverage)
+.get(beverageController.getSpecificBeverage)
 
+
+
+kitchenRouter.route('/:id/leaderboard/:year/:month')
+.get(logController.calculateMonthlyLeaderboard)
+
+kitchenRouter.route('/:id/leaderboard/:year')
+.get(logController.calculateYearlyLeaderboard)
 
 
 

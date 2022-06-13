@@ -3,7 +3,6 @@ const app = express()
 
 const db = require('./config/database')
 const userRouter = require('./routes/users')
-const fridgeRouter = require('./routes/beverages')
 const kitchenRouter = require('./routes/kitchens')
 
 
@@ -15,7 +14,6 @@ db.authenticate()
 app.use(express.json())
 app.use('/users', userRouter)
 
-app.use('/dk', fridgeRouter)
 app.use('/kitchens', kitchenRouter)
 
 app.listen(3000, () => {

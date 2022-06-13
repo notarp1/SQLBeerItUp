@@ -6,12 +6,14 @@ const KitchenUsers = require('../models/kitchenUser');
 const stringHash = require("string-hash")
 
 
+
+
 exports.isAssigned = async function (req, res){
     try {
         var kitchenlist = await KitchenUsers.findAll({where: {uId: req.params.id}})
         var kitchen = kitchenlist[0]
         if(kitchenlist.length > 0) res.status(200).json({isAssigned: true,
-        kId: kitchen.id});
+        kId: kitchen.kId});
         else  res.status(200).json({isAssigned: false,
             kId: -1});
     } catch (e) {
@@ -29,8 +31,8 @@ exports.createUser = async function (req, res) {
         user.uPass = passEncrypt
         
 
-        await Users.create(user)
-        res.status(201).send(true)
+        var userRes = await Users.create(user)
+        res.status(201).json(userRes)
 
     } catch (e) {
         sendErrorCode(e, res);
@@ -61,14 +63,7 @@ exports.login = async function (req, res) {
     }
 }
 
-exports.getUserList = async function (req, res) {
-    try {
-        var users = await Users.findAll()
-        res.status(200).json(users)
-    } catch (e) {
-        sendErrorCode(e, res)
-    }
-}
+
 
 exports.deleteUser = async function (req, res) {
     try {
