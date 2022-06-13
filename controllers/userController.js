@@ -21,6 +21,19 @@ exports.isAssigned = async function (req, res){
         res.status(400).send(e);
     }
 }
+
+exports.emailExists = async function (req, res){
+    try {
+        var userList = await Users.findAll({where: {uEmail: req.params.email}})
+        var users = userList[0]
+        if(userList.length > 0) res.status(200).send(false);
+        else res.status(200).send(true);;
+    } catch (e) {
+        console.log(e.code)
+        res.status(400).send(e);
+    }
+}
+
 //Password Encryption
 exports.createUser = async function (req, res) {
     try {
@@ -47,7 +60,7 @@ exports.login = async function (req, res) {
         var pass = loginObject.uPass
 
         var hashedPass = stringHash(pass)
-        var user = await Users.findOne({ where: { uPhone: loginObject.uPhone} });
+        var user = await Users.findOne({ where: { uEmail: loginObject.uEmail} });
       
         if(user.uPass == hashedPass){
             res.status(200).json(user)

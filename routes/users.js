@@ -7,6 +7,10 @@ const logController = require('../controllers/logController')
 userRouter.route('/')
 .post(userController.createUser)
 
+userRouter.route('/email_check/:email')
+.get(userController.emailExists)
+
+
 userRouter.route('/:id/logs/beverages/added')
 .get(logController.added)
 

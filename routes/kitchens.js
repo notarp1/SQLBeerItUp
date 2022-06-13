@@ -11,6 +11,8 @@ kitchenRouter.route('/')
 .post(kitchenController.createKitchen)
 
 
+kitchenRouter.route('/name_check/:name')
+.get(kitchenController.nameExists)
 
 
 kitchenRouter.route('/login')

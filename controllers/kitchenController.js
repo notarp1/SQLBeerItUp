@@ -93,6 +93,20 @@ exports.createKitchen = async function (req, res) {
     sendErrorCode(e, res);
   }
 };
+
+exports.nameExists = async function (req, res){
+  try {
+      var kitchenList = await Kitchens.findAll({where: {kName: req.params.name}})
+    
+      if(kitchenList.length > 0) res.status(200).send(false);
+      else res.status(200).send(true);;
+  } catch (e) {
+      console.log(e.code)
+      res.status(400).send(e);
+  }
+}
+
+
 exports.login = async function (req, res) {
   try {
     var kitchen = req.body;

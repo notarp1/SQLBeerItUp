@@ -9,6 +9,10 @@ const Kitchen = db.define('Kitchen', {
       type: DataTypes.STRING,
       allowNull: false
     },
+    kEmail: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     kPass: {
       type: DataTypes.STRING,
       allowNull: false
