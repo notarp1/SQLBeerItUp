@@ -12,7 +12,7 @@ const Sequelize = require('sequelize')
 //   host: 'beeritup.cluster-c7qylzzsgduz.eu-central-1.rds.amazonaws.com',
 //   port: 3306,
 //   dialect: 'mysql'
-
+//adiwh
 // });
 
 module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, {
