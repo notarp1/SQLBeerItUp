@@ -17,7 +17,7 @@ const Sequelize = require('sequelize')
 
 module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, {
   host: process.env.URL1,
-  port: 3333,
+  port: 3306,
   logging: console.log,
   dialect: 'mysql',
   dialectOptions: {
