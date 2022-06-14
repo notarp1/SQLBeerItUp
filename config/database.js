@@ -15,7 +15,7 @@ const Sequelize = require('sequelize')
 
 // });
 
-module.exports = new Sequelize(process.env.DATABASE, config.USERNAME, config.PASSWORD, {
+module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, {
   host: process.env.URL1,
   port: process.env.PORT,
   logging: console.log,
