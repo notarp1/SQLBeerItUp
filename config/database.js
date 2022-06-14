@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-var config = require("../config/config.json")
+//var config = require("../config/config.json")
 // module.exports = new Sequelize('beeritup', 'notarp1', 'FrancescoFly2005', {
 //     host: 'beeritup.database.windows.net',
 //     dialect: 'mssql'
