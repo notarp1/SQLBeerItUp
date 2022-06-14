@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-//var config = require("../config/config.json")
+var config = require("../config/config.json")
 // module.exports = new Sequelize('beeritup', 'notarp1', 'FrancescoFly2005', {
 //     host: 'beeritup.database.windows.net',
 //     dialect: 'mssql'
@@ -12,12 +12,12 @@ const Sequelize = require('sequelize')
 //   host: 'beeritup.cluster-c7qylzzsgduz.eu-central-1.rds.amazonaws.com',
 //   port: 3306,
 //   dialect: 'mysql'
-//adiwh
+
 // });
 
-module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, {
+module.exports = new Sequelize(process.env.DATABASE, config.USERNAME, config.PASSWORD, {
   host: process.env.URL1,
-  port: 3306,
+  port: process.env.PORT,
   logging: console.log,
   dialect: 'mysql',
   dialectOptions: {
