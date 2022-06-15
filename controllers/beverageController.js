@@ -212,8 +212,8 @@ exports.getSpecificBeverage = async function (req, res) {
 
     var beerlist = await Beverage.findAll({
       where: { kitchenId: kId, beverageTypeId: selectedBeer,
-        removedAt: {[Op.not]: null},
-        settleDate: {[Op.not]: null}},
+        removedAt: {[Op.is]: null},
+        settleDate: {[Op.is]: null}},
     });
 
     res.status(200).json(beerlist);
