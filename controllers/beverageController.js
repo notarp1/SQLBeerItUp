@@ -237,7 +237,7 @@ exports.addBeverages = async function (req, res) {
     }
 
     var beverageTypeId = await getBeverageId(beverageName, kitchenId);
-    var price =  Math.round(parseInt(beerInfo.price));
+    var price =  parseInt(beerInfo.price);
     var beverageOwnerId = beerInfo.uId;
     var dateTime = new Date();
   
