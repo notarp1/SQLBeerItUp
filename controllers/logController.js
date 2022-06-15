@@ -120,7 +120,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       res.status(200).json(list)
   
     } catch (error) {
-      console.log("J")
+
       sendErrorCode(error, res);
     }
     
