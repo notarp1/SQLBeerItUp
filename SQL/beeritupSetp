@@ -1,5 +1,6 @@
 use beeritup_db;
 
+
 CREATE TABLE if not exists Users
 (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 

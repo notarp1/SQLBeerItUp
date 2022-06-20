@@ -88,7 +88,7 @@ exports.createKitchen = async function (req, res) {
 
     await BeverageType.bulkCreate(beverages);
 
-    res.status(201).send(true);
+    res.status(201).json(kitchenResult);
   } catch (e) {
     sendErrorCode(e, res);
   }
