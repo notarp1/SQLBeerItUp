@@ -22,6 +22,10 @@ kitchenRouter.route('/login')
 kitchenRouter.route('/:id')
 .get(kitchenController.getKitchen)
 
+kitchenController.route('/:id/admin/add/:uId')
+.post(kitchenController.addKitchenAdmin)
+
+
 kitchenRouter.route('/:id/users')
 .get(kitchenController.getKitchenUsers)
 
@@ -59,6 +63,8 @@ kitchenRouter.route('/:id/leaderboard/:year/:month')
 
 kitchenRouter.route('/:id/leaderboard/:year')
 .get(logController.calculateYearlyLeaderboard)
+
+kitchenController.r
 
 
 

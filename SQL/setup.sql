@@ -15,6 +15,14 @@ CREATE TABLE if not exists Users
 );
 
 
+CREATE TABLE if not exists KitchenAdmins
+(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    kId INT NOT NULL,
+    uId INT NOT NULL,
+    createdAt DATETIME
+);
+
 
 CREATE Table if not exists Kitchens(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

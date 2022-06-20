@@ -3,9 +3,11 @@ const res = require("express/lib/response");
 const db = require("../config/database");
 const Kitchens = require("../models/kitchen");
 const KitchenUsers = require("../models/kitchenUser");
+const KitchenAdmins = require("../models/kitchenAdmin");
 const stringHash = require("string-hash");
 const BeverageType = require("../models/beverageType");
 const sequelize = require("sequelize");
+
 
 exports.createKitchen = async function (req, res) {
   try {
@@ -130,6 +132,16 @@ exports.getKitchen = async function (req, res) {
   try {
     var kitchen = await Kitchens.findOne({ where: { id: req.params.id } });
     res.status(200).json(kitchen);
+  } catch (e) {
+    sendErrorCode(e, res);
+  }
+};
+
+exports.addKitchenAdmin = async function (req, res) {
+  try {
+    var kitchenAdmin = req.body;
+    await KitchenAdmins.create(kitchenAdmin);
+    res.status(200).send(true);
   } catch (e) {
     sendErrorCode(e, res);
   }
