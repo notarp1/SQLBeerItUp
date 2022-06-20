@@ -1,6 +1,5 @@
 const Sequelize = require('sequelize')
-
-//var config = require("../config/config.json")
+var config = require("../config/config.json")
 // module.exports = new Sequelize('beeritup', 'notarp1', 'FrancescoFly2005', {
 //     host: 'beeritup.database.windows.net',
 //     dialect: 'mssql'
@@ -27,8 +26,8 @@ module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, proce
 });
 
 
-// module.exports = new Sequelize(config.database, config.username, config.password, {
-//   host: config.url1,
+// module.exports = new Sequelize(config.database2, config.username, config.password, {
+//   host: config.url2,
 //   port: 3306,
 //   logging: console.log,
 //   dialect: 'mysql',
