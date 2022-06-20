@@ -139,8 +139,8 @@ exports.getKitchen = async function (req, res) {
 
 exports.addKitchenAdmin = async function (req, res) {
   try {
-    var kitchenAdmin = req.body;
-    await KitchenAdmins.create(kitchenAdmin);
+    
+    await KitchenAdmins.create({kId: req.params.id, uId: req.params.uId});
     res.status(200).send(true);
   } catch (e) {
     sendErrorCode(e, res);
