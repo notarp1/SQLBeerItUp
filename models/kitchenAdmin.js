@@ -16,4 +16,4 @@ updatedAt: false,
 });
 
 
-module.exports = KitchenUser
+module.exports = KitchenAdmin
