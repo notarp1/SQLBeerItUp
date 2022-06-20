@@ -12,10 +12,8 @@ exports.isAssigned = async function (req, res){
     try {
         var kitchenlist = await KitchenUsers.findAll({where: {uId: req.params.id}})
         var kitchen = kitchenlist[0]
-        if(kitchenlist.length > 0) res.status(200).json({isAssigned: true,
-        kId: kitchen.kId});
-        else  res.status(200).json({isAssigned: false,
-            kId: -1});
+        if(kitchenlist.length > 0) res.status(200).json({kId: kitchen.kId});
+        else res.status(200).json({kId: -1});
     } catch (e) {
         console.log(e.code)
         res.status(400).send(e);

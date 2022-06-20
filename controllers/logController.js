@@ -95,7 +95,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       
       let kId = req.params.id
       let year = req.params.year 
-      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and settleDate BETWEEN '${year}-1-01' AND '${year}-12-31' GROUP BY t2.uName ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and settleDate BETWEEN '${year}-1-01' AND LAST_DAY('${year}-${month}-01') GROUP BY t2.uName ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
   
       res.status(200).json(list)
   
@@ -114,7 +114,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       let month = parseInt(req.params.month)
       let year = req.params.year
   
-      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and settleDate BETWEEN '${year}-${month}-01' AND '${year}-${(month+1)}-01' GROUP BY t2.uName ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and settleDate BETWEEN '${year}-${month}-01' AND LAST_DAY('${year}-${month}-01') GROUP BY t2.uName ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
   
       
       res.status(200).json(list)
