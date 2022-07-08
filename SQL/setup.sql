@@ -72,4 +72,10 @@ CREATE TABLE if not exists Beverages
 );
 
 
+CREATE TABLE if not exists DeviceTokens
+(
+    uId INT NOT NULL PRIMARY KEY, 
+    deviceId varchar(250) NOT NULL
+);
+
 

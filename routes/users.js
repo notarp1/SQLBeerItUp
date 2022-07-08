@@ -7,6 +7,10 @@ const logController = require('../controllers/logController')
 userRouter.route('/')
 .post(userController.createUser)
 
+userRouter.route('/:uId/deviceToken/set/:deviceToken')
+.post(userController.setDeviceToken)
+
+
 userRouter.route('/email_check/:email')
 .get(userController.emailExists)
 

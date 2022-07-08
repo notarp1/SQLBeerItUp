@@ -3,9 +3,20 @@ const res = require('express/lib/response');
 const db = require('../config/database');
 const Users = require('../models/user');
 const KitchenUsers = require('../models/kitchenUser');
+const DeviceTokens = require('../models/deviceTokens')
 const stringHash = require("string-hash")
 
 
+
+exports.setDeviceToken = async function (req, res){
+    try {
+        await DeviceTokens.upsert({uId: req.params.uId}, {deviceId: req.params.deviceToken})
+        res.status(200).send({success: true})
+    } catch (e) {
+        console.log(e.code)
+        res.status(400).send(e);
+    }
+}
 
 
 exports.isAssigned = async function (req, res){
