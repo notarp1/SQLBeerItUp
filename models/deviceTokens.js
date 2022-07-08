@@ -19,4 +19,4 @@ const DeviceToken = db.define('DeviceToken', {
   createdAt: false
   });
   
-module.exports = DeviceTokens
+module.exports = DeviceToken
