@@ -7,8 +7,15 @@ const logController = require('../controllers/logController')
 userRouter.route('/')
 .post(userController.createUser)
 
+userRouter.route('/:uId/deviceToken')
+.get(userController.getDeviceToken)
+
+
 userRouter.route('/:uId/deviceToken/set/:deviceToken')
 .post(userController.setDeviceToken)
+
+
+
 
 
 userRouter.route('/email_check/:email')
@@ -27,7 +34,8 @@ userRouter.route('/:id/logs/beverages/bought')
 userRouter.route('/:id/logs/beverages/sold')
 .get(logController.sold)
 
-
+userRouter.route('/test')
+.get(userController.notifTest)
 
 
 

@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize')
-//var config = require("../config/config.json")
+var config = require("../config/config.json")
 // module.exports = new Sequelize('beeritup', 'notarp1', 'FrancescoFly2005', {
 //     host: 'beeritup.database.windows.net',
 //     dialect: 'mssql'
@@ -14,20 +14,8 @@ const Sequelize = require('sequelize')
 
 // });
 
-module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, {
-  host: process.env.URL1,
-  port: 3306,
-  logging: console.log,
-  dialect: 'mysql',
-  dialectOptions: {
-      ssl:'Amazon RDS'
-  },
-  language: 'en'
-});
-
-
-// module.exports = new Sequelize(config.database2, config.username, config.password, {
-//   host: config.url2,
+// module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, process.env.PASSWORD, {
+//   host: process.env.URL1,
 //   port: 3306,
 //   logging: console.log,
 //   dialect: 'mysql',
@@ -36,3 +24,15 @@ module.exports = new Sequelize(process.env.DATABASE, process.env.USERNAME, proce
 //   },
 //   language: 'en'
 // });
+
+
+module.exports = new Sequelize(config.devbeer, config.username, config.password, {
+  host: config.mysqlAccess,
+  port: 3306,
+  logging: console.log,
+  dialect: 'mysql',
+  dialectOptions: {
+      ssl:'Amazon RDS'
+  },
+  language: 'en'
+});

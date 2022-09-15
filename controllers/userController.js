@@ -5,13 +5,44 @@ const Users = require('../models/user');
 const KitchenUsers = require('../models/kitchenUser');
 const DeviceTokens = require('../models/deviceTokens')
 const stringHash = require("string-hash")
+const NotificationService = require('../services/notificationService');
+const { addKitchenAdmin } = require('./kitchenController');
 
+exports.notifTest = async function (req, res){
+    var key = "dJDCvLFYSn26I9ZejkT4qj:APA91bEvgcXvtJMkXphjLJGFBIndbSitemfGjpCuUi-6JbbnvVW8C6jjy8AHx1q1JvAYk6REQPOqMcSZsvRKs-nu8ayW0YqunDvGqzPGLRKSdqEDdr3WBL9wZ0bilNY5ryawIDGqBYA2";
+    var payload = {data: {
+        MyKey1: "Hello"
+    }}
+    var options = {
+        priority: "high",
+        timeToLive: 60*60*24
+    }
 
+    try {
+        var response = await NotificationService.messaging().sendToDevice(key, payload, options)
+    
+        res.status(200).json(response)
+    } catch (e) {
+        res.status(400).send(e);
+    }
+
+    
+}
 
 exports.setDeviceToken = async function (req, res){
     try {
-        await DeviceTokens.upsert({uId: req.params.uId}, {deviceId: req.params.deviceToken})
+        await DeviceTokens.upsert({uId: req.params.uId, deviceToken: req.params.deviceToken})
         res.status(200).send({success: true})
+    } catch (e) {
+        console.log(e.code)
+        res.status(400).send(e);
+    }
+}
+
+exports.getDeviceToken = async function (req, res){
+    try {
+        var token = await DeviceTokens.findOne({where: {uId: req.params.uId} })
+        res.status(200).json({user: token.deviceToken})
     } catch (e) {
         console.log(e.code)
         res.status(400).send(e);
@@ -64,12 +95,13 @@ exports.createUser = async function (req, res) {
 
 exports.login = async function (req, res) {
     try {
-        
+      
         var loginObject = req.body
         var pass = loginObject.uPass
 
         var hashedPass = stringHash(pass)
         var user = await Users.findOne({ where: { uEmail: loginObject.uEmail} });
+      
       
         if(user.uPass == hashedPass){
             res.status(200).json(user)

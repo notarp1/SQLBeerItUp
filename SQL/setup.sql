@@ -40,6 +40,7 @@ CREATE TABLE if not exists KitchenUsers
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     kId INT NOT NULL,
     uId INT NOT NULL,
+    isAdmin TINYINT NOT NULL,
     createdAt DATETIME
    
 );
@@ -75,7 +76,8 @@ CREATE TABLE if not exists Beverages
 CREATE TABLE if not exists DeviceTokens
 (
     uId INT NOT NULL PRIMARY KEY, 
-    deviceId varchar(250) NOT NULL
+    deviceToken varchar(250) UNIQUE NOT NULL,
+    updatedAt   DATETIME
 );
 
 

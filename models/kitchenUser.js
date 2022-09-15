@@ -10,7 +10,13 @@ const KitchenUser = db.define('KitchenUsers', {
   uId:{
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  isAdmin: {
+    type: DataTypes.TINYINT,
+    defaultValue: 0,
+    allowNull: false
   }
+
 },{
 updatedAt: false,
 });
