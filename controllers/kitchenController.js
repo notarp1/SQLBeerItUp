@@ -158,12 +158,11 @@ exports.getAllKitchens = async function (req, res) {
 
 exports.postKitchenUser = async function (req, res) {
   try {
-    var kId = req.params.id;
-    var uId = req.params.uId;
+    var kitchenUser = req.body
     
-    var user = await KitchenUsers.findOne({where: {kId: kId, uId: uId}, type: sequelize.QueryTypes.SELECT })
+    var user = await KitchenUsers.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
     if(user == null){
-      await KitchenUsers.create({ kId: kId, uId: uId });
+      await KitchenUsers.create(kitchenUser);
       res.status(201).send(true);
     } else {
     

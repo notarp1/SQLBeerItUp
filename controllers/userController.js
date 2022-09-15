@@ -101,13 +101,17 @@ exports.login = async function (req, res) {
 
         var hashedPass = stringHash(pass)
         var user = await Users.findOne({ where: { uEmail: loginObject.uEmail} });
-      
-      
+        
+        if(user == null){
+  
+            res.status(404).json({ message: 'Ooops' });
+            return
+        }
         if(user.uPass == hashedPass){
             res.status(200).json(user)
             return
         }
-        res.status(401).send(false)
+        res.status(401).json({ message: 'Penmios' });
      
 
         

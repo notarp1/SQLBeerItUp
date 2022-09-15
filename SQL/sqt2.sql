@@ -1,4 +1,4 @@
-
+use BeerItUp_dev_DB;
 
 CREATE TABLE if not exists Users
 (
