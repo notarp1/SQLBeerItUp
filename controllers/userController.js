@@ -104,14 +104,14 @@ exports.login = async function (req, res) {
         
         if(user == null){
   
-            res.status(404).json({ message: 'Ooops' });
+            res.status(404).json({ message: 'Not Found'});
             return
         }
         if(user.uPass == hashedPass){
             res.status(200).json(user)
             return
         }
-        res.status(401).json({ message: 'Penmios' });
+        res.status(401).json({ message: 'Wrong Password' })
      
 
         
