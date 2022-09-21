@@ -143,7 +143,7 @@ exports.updateUser = async function (req, res) {
         var userToUpdate = await Users.findOne({ where: { userPhone: updatedUser.uPhone } });
         
         await userToUpdate.update({ uName: updatedUser.uName, userPhone: updatedUser.uPhone })
-
+      
         res.status(200).send(true)
     } catch (e) {
         sendErrorCode(e, res)
@@ -152,7 +152,9 @@ exports.updateUser = async function (req, res) {
 
 exports.getUser = async function (req, res) {
     try {
+       
         var user = await Users.findOne({ where: { id: req.params.id} });
+    
         res.status(200).json(user)
     } catch (e) {
         console.log("error")
