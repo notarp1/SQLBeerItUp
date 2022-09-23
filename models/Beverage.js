@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../config/database')
 
-const Beverages = db.define('Beverage', {
+const Beverage = db.define('Beverage', {
     // Model attributes are defined here
     
     beverageTypeId: {
@@ -44,4 +44,4 @@ const Beverages = db.define('Beverage', {
   timestamps: false
   });
   
-module.exports = Beverages
+module.exports = Beverage

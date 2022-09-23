@@ -166,10 +166,10 @@ exports.getUser = async function (req, res) {
 function sendErrorCode(e, res) {
     switch (e.name) {
         case "SequelizeUniqueConstraintError":
-            res.status(409).send(e);
+            res.status(409).send(e.message);
             break;
         case "SequelizeDatabaseError":
-            res.status(409).send(e);
+            res.status(409).send(e.message);
             break;
         default:
             res.status(400).send(e);

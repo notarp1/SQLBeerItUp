@@ -2,9 +2,9 @@
 
   "scripts": {
 
-    "dev": "nodemon app.js",
+    "dev": "nodemon index.js",
 
-    "start": "node app.js"
+    "start": "node index.js"
 
   },
 

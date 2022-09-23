@@ -8,7 +8,10 @@ const logController = require('../controllers/logController')
 
 kitchenRouter.route('/')
 .get(kitchenController.getAllKitchens)
+
+kitchenRouter.route('/:username')
 .post(kitchenController.createKitchen)
+
 
 
 kitchenRouter.route('/name_check/:name')
@@ -24,6 +27,8 @@ kitchenRouter.route('/:id')
 
 kitchenRouter.route('/:id/admin/add/:uId')
 .post(kitchenController.addKitchenAdmin)
+
+
 
 
 kitchenRouter.route('/:id/users')
@@ -64,7 +69,7 @@ kitchenRouter.route('/:id/leaderboard/:year/:month')
 kitchenRouter.route('/:id/leaderboard/:year')
 .get(logController.calculateYearlyLeaderboard)
 
-kitchenController.r
+
 
 
 

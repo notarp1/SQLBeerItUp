@@ -2,8 +2,8 @@ const express = require('express')
 const app = express()
 
 const db = require('./config/database')
-const userRouter = require('./routes/users')
-const kitchenRouter = require('./routes/kitchens')
+const userRouter = require('./routes/userRouter')
+const kitchenRouter = require('./routes/kitchenRouter')
 
 
 db.authenticate()

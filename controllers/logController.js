@@ -4,7 +4,7 @@ const db = require('../config/database');
 const Kitchens = require('../models/kitchen');
 const KitchenUsers = require('../models/kitchenUser')
 const BeverageType = require('../models/beverageType');
-const Beverages = require("../models/beverages");
+const Beverages = require("../models/beverage");
 const Users = require('../models/user');
 
 

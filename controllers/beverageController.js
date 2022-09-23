@@ -1,17 +1,10 @@
 const { json } = require("express/lib/response");
 const res = require("express/lib/response");
 const db = require("../config/database");
-const Beverage = require("../models/beverages");
+const Beverage = require("../models/beverage");
 const BeverageType = require("../models/beverageType");
-const sql = require("mssql");
-const DateTime = require("tedious/lib/data-types/datetime");
-const KitchenUser = require("../models/kitchenUser");
 const sequelize = require("sequelize");
-const { listen } = require("express/lib/application");
 const  { Op } = require("sequelize");
-const { use } = require("express/lib/router");
-const { connect } = require("tedious");
-const { getKitchenUsers } = require("./kitchenController");
 
 async function getBeverageId(name, kId) {
   try {
@@ -33,7 +26,8 @@ exports.calculateMoneyUserIsOwed = async function (req, res) {
       { type: sequelize.QueryTypes.SELECT }
     );
       res.status(200).json(moneyOwed)
-
+      
+      
   } catch (error) {
     sendErrorCode(error, res);
   }
@@ -92,10 +86,12 @@ exports.makePayment = async function (req, res){
 /* Run when calculating beverage price */
 exports.calculateBeverageCostSequential = async function (req, res) {
   try {
-    var configObj = req.body;
-
+    
+    var bevCalcConfig = req.body
+ 
+ 
     var kId = req.params.id;
-    var bevId = await getBeverageId(configObj.bName, kId);
+    var bevId = await getBeverageId(bevCalcConfig.bevName, kId);
 
     var selectedBeverageInStock = await Beverage.findAll({
       where: { beverageTypeId: bevId, kitchenId: kId, removedAt: {[Op.is]: null} },
@@ -106,7 +102,7 @@ exports.calculateBeverageCostSequential = async function (req, res) {
     var beveragesToSend = new Array();
     var price = 0;
 
-    for (let index = 0; index < configObj.count; index++) {
+    for (let index = 0; index < bevCalcConfig.count; index++) {
       price += selectedBeverageInStock[index].price;
       beveragesToSend.push(selectedBeverageInStock[index]);
     }
