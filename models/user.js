@@ -6,19 +6,16 @@ const db = require('../config/database')
 const User = db.define('User', {
     // Model attributes are defined here
    
+    id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true
+    },
     uName: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    uEmail: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     uPhone: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    uPass: {
       type: DataTypes.STRING,
       allowNull: false
     },

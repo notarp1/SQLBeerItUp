@@ -25,12 +25,14 @@ kitchenRouter.route('/login')
 kitchenRouter.route('/:id')
 .get(kitchenController.getKitchen)
 
-kitchenRouter.route('/:id/admin/add/:uId')
-.post(kitchenController.addKitchenAdmin)
+kitchenRouter.route('/:id/admins')
+.post(kitchenController.giveUserAdminRights)
 
 
 
 
+kitchenRouter.route('/:id/users/:uId')
+.get(kitchenController.getKitchenUser)
 kitchenRouter.route('/:id/users')
 .get(kitchenController.getKitchenUsers)
 

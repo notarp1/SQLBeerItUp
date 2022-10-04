@@ -1,8 +1,8 @@
 const { json } = require("express/lib/response");
 const res = require("express/lib/response");
 const db = require("../config/database");
-const Beverage = require("../models/beverage");
-const BeverageType = require("../models/beverageType");
+const Beverage = require("../models/Beverage");
+const BeverageType = require("../models/BeverageType");
 const sequelize = require("sequelize");
 const  { Op } = require("sequelize");
 

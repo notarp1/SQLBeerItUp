@@ -2,10 +2,12 @@ const { json } = require("express/lib/response");
 const res = require("express/lib/response");
 const db = require("../config/database");
 const Kitchens = require("../models/Kitchen");
-const KitchenUsers = require("../models/KitchenUser");
+const KitchenUser = require("../models/KitchenUser");
 const stringHash = require("string-hash");
 const BeverageType = require("../models/BeverageType");
 const sequelize = require("sequelize");
+const User = require("../models/User");
+
 
 
 
@@ -66,10 +68,11 @@ exports.getKitchen = async function (req, res) {
   }
 };
 
-exports.addKitchenAdmin = async function (req, res) {
+exports.giveUserAdminRights = async function (req, res) {
   try {
+    var kitchenAdmin = req.body
     
-    await KitchenAdmins.create({kId: req.params.id, uId: req.params.uId});
+    await KitchenUser.update({isAdmin: true}, {where: {uId: kitchenAdmin.uId}})
     res.status(200).send(true);
   } catch (e) {
     handleDatabaseError(e, res);
@@ -89,9 +92,9 @@ exports.postKitchenUser = async function (req, res) {
   try {
     var kitchenUser = req.body
     
-    var user = await KitchenUsers.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
+    var user = await KitchenUser.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
     if(user == null){
-      await KitchenUsers.create(kitchenUser);
+      await KitchenUser.create(kitchenUser);
       res.status(201).send(true);
     } else {
     
@@ -105,6 +108,22 @@ exports.postKitchenUser = async function (req, res) {
 
 
 
+exports.getKitchenUser = async function (req, res) {
+  try {
+    var kitchen = await Kitchens.findOne({where: {id: req.params.id}})
+ 
+    if(kitchen == null){
+      res.status(404).send({message: "Kitchen Does Not Exist"})
+      return
+    }
+    
+    var users = await KitchenUser.findOne({where: {id: req.params.uId}})
+    
+    res.status(200).json(users);
+  } catch (e) {
+    handleDatabaseError(e, res);
+  }
+};
 
 
 

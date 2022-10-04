@@ -21,6 +21,12 @@ userRouter.route('/:uId/deviceToken/set/:deviceToken')
 userRouter.route('/email_check/:email')
 .get(userController.emailExists)
 
+userRouter.route('/phone_check/registered/:phone')
+.get(userController.phoneNumberIsRegistrered)
+
+userRouter.route('/phone_check/available/:phone')
+.get(userController.phoneNumberIsAvailable)
+
 
 userRouter.route('/:id/logs/beverages/added')
 .get(logController.added)

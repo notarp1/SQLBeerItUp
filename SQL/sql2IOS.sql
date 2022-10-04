@@ -2,11 +2,9 @@ use BeerItUp_dev_DB;
 
 CREATE TABLE if not exists Users
 (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+    id varchar(255) NOT NULL PRIMARY KEY, 
     uName varchar(30) NOT NULL,
-    uEmail varchar(50) UNIQUE NOT NULL,
-    uPhone varchar(20) NOT NULL,
-    uPass varchar(20) NOT NULL,
+    uPhone varchar(20) UNIQUE NOT NULL,
     uPin INT NOT NULL,
     createdAt DATETIME
 

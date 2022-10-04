@@ -1,12 +1,11 @@
 
 const res = require('express/lib/response');
 const db = require('../config/database');
-const Users = require('../models/user');
-const KitchenUsers = require('../models/kitchenUser');
-const DeviceTokens = require('../models/deviceTokens')
-const stringHash = require("string-hash")
+const Users = require('../models/User');
+const KitchenUsers = require('../models/KitchenUser');
+const DeviceTokens = require('../models/DeviceTokens')
 const NotificationService = require('../services/notificationService');
-const { addKitchenAdmin } = require('./kitchenController');
+const sequelize = require("sequelize");
 
 exports.notifTest = async function (req, res){
     var key = "dJDCvLFYSn26I9ZejkT4qj:APA91bEvgcXvtJMkXphjLJGFBIndbSitemfGjpCuUi-6JbbnvVW8C6jjy8AHx1q1JvAYk6REQPOqMcSZsvRKs-nu8ayW0YqunDvGqzPGLRKSdqEDdr3WBL9wZ0bilNY5ryawIDGqBYA2";
@@ -54,8 +53,8 @@ exports.isAssigned = async function (req, res){
     try {
         var kitchenlist = await KitchenUsers.findAll({where: {uId: req.params.id}})
         var kitchen = kitchenlist[0]
-        if(kitchenlist.length > 0) res.status(200).json({kId: kitchen.kId});
-        else res.status(200).json({kId: -1});
+        if(kitchenlist.length > 0) res.status(200).send(kitchen.kId);
+        else res.status(200).json(-1);
     } catch (e) {
         console.log(e.code)
         res.status(400).send(e);
@@ -66,8 +65,43 @@ exports.emailExists = async function (req, res){
     try {
         var userList = await Users.findAll({where: {uEmail: req.params.email}})
         var users = userList[0]
-        if(userList.length > 0) res.status(200).send(false);
+        if(userList.length > 0) res.status(409).send({message: "A user is already registrered with this email"});
         else res.status(200).send(true);;
+    } catch (e) {
+        console.log(e.code)
+        res.status(400).send(e);
+    }
+}
+
+exports.phoneNumberIsAvailable = async function (req, res){
+    try {
+        var userList = await Users.findAll({where: {uPhone: req.params.phone}})
+        var users = userList[0]
+        if(userList.length > 0) {
+            console.log("fail.")
+            res.status(409).send({message: "A user is already registrered with this number!"});
+        }else {
+            console.log("success.")
+            res.status(200).send(true)
+        }
+    } catch (e) {
+        console.log(e.code)
+        res.status(400).send(e);
+    }
+}
+
+exports.phoneNumberIsRegistrered = async function (req, res){
+    try {
+        var userList = await Users.findAll({where: {uPhone: req.params.phone}})
+        var users = userList[0]
+        if(userList.length > 0) {
+            console.log("fail.")
+            res.status(200).send(true)
+           
+        }else {
+            console.log("success.")
+            res.status(405).send({message: "No account is registrered with this number!"});
+        }
     } catch (e) {
         console.log(e.code)
         res.status(400).send(e);
@@ -79,11 +113,7 @@ exports.createUser = async function (req, res) {
     try {
        
         var user = req.body
-        console.log(user)
-        var passEncrypt = stringHash(user.uPass)
-        user.uPass = passEncrypt
-        
-
+        console.log(req.body)
         var userRes = await Users.create(user)
         res.status(201).json(userRes)
 
@@ -166,10 +196,10 @@ exports.getUser = async function (req, res) {
 function sendErrorCode(e, res) {
     switch (e.name) {
         case "SequelizeUniqueConstraintError":
-            res.status(409).send(e.message);
+            res.status(409).send(e);
             break;
         case "SequelizeDatabaseError":
-            res.status(409).send(e.message);
+            res.status(409).send(e);
             break;
         default:
             res.status(400).send(e);

@@ -1,13 +1,17 @@
 const { json } = require('express/lib/response');
 const res = require('express/lib/response');
 const db = require('../config/database');
-const Kitchens = require('../models/kitchen');
-const KitchenUsers = require('../models/kitchenUser')
-const BeverageType = require('../models/beverageType');
-const Beverages = require("../models/beverage");
-const Users = require('../models/user');
+const Kitchens = require('../models/Kitchen');
+const KitchenUsers = require('../models/KitchenUser')
+const BeverageType = require('../models/BeverageType');
+const Beverages = require("../models/Beverage");
+const Users = require('../models/User');
 
 
+
+exports.checkInternetConnection = async function (req, res){
+    res.status(200).send("I'm up and running")
+}
 
 exports.added = async function (req, res){
     try {
