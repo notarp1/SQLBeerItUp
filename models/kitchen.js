@@ -7,6 +7,10 @@ const Kitchen = db.define('Kitchen', {
     kName: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    kPin: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
     // Other model options go here

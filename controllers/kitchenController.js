@@ -15,9 +15,9 @@ const User = require("../models/User");
 exports.createKitchen = async function (req, res) {
   try {
     
-    var kitchen = await Kitchens.create({kName: req.params.username})
-    console.log(kitchen.id)
     
+    var kitchen = await Kitchens.create(req.body)
+    kitchen.name = kitchen.kName.trim()
     var beverages = assignBeveragesToKitchen(kitchen.id)
     await BeverageType.bulkCreate(beverages);
 
@@ -68,6 +68,27 @@ exports.getKitchen = async function (req, res) {
   }
 };
 
+
+exports.kitchenAuthentication = async function (req, res){
+  try {
+      var kitchenAuthObject = req.body
+      var kitchen = await Kitchens.findOne({where: {kName: kitchenAuthObject.kName.trim()}})
+
+      console.log(kitchen.kPin)
+      console.log(kitchenAuthObject.kPin)
+
+      if(kitchen.kPin == kitchenAuthObject.kPin){
+        res.status(200).json(kitchen);
+
+      } else {
+        res.status(401).send({message: "Wrong password"});
+      }
+
+  } catch (e) {
+     handleDatabaseError(e, res);
+  }
+}
+
 exports.giveUserAdminRights = async function (req, res) {
   try {
     var kitchenAdmin = req.body
@@ -90,12 +111,14 @@ exports.getAllKitchens = async function (req, res) {
 
 exports.postKitchenUser = async function (req, res) {
   try {
+    console.log(req.body)
+
     var kitchenUser = req.body
-    
     var user = await KitchenUser.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
+    
     if(user == null){
       await KitchenUser.create(kitchenUser);
-      res.status(201).send(true);
+      res.status(201).send("true");
     } else {
     
       res.status(400).send(Error("User already exists"));

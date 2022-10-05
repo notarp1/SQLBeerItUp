@@ -19,6 +19,7 @@ CREATE TABLE if not exists Users
 CREATE Table if not exists Kitchens(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     kName varchar(50) UNIQUE NOT NULL, 
+    kPin varchar(50) NOT NULL,
     createdAt DATETIME
 );
 
@@ -28,7 +29,7 @@ CREATE TABLE if not exists KitchenUsers
 (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     kId INT NOT NULL,
-    uId INT NOT NULL,
+    uId varchar(255) NOT NULL,
     isAdmin TINYINT NOT NULL,
     createdAt DATETIME
    

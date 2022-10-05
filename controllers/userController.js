@@ -49,15 +49,17 @@ exports.getDeviceToken = async function (req, res){
 }
 
 
+
 exports.isAssigned = async function (req, res){
     try {
         var kitchenlist = await KitchenUsers.findAll({where: {uId: req.params.id}})
         var kitchen = kitchenlist[0]
-        if(kitchenlist.length > 0) res.status(200).send(kitchen.kId);
-        else res.status(200).json(-1);
+        console.log(kitchenlist.length)
+        if(kitchenlist.length > 0) res.status(201).json(1);
+        else res.status(201).json(-1);
     } catch (e) {
         console.log(e.code)
-        res.status(400).send(e);
+        res.send(400).send(e);
     }
 }
 

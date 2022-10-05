@@ -8,11 +8,10 @@ const logController = require('../controllers/logController')
 
 kitchenRouter.route('/')
 .get(kitchenController.getAllKitchens)
-
-kitchenRouter.route('/:username')
 .post(kitchenController.createKitchen)
 
-
+kitchenRouter.route('/auth')
+.post(kitchenController.kitchenAuthentication)
 
 kitchenRouter.route('/name_check/:name')
 .get(kitchenController.nameExists)
