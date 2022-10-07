@@ -55,10 +55,10 @@ CREATE TABLE if not exists Beverages
     beverageTypeId INT NOT NULL,
     price INT NOT NULL,
     kitchenId INT NOT NULL,
-    beverageOwnerId INT NOT NULL,
+    beverageOwnerId varchar(250) NOT NULL,
     createdAt DATETIME NOT NULL,
     removedAt DATETIME,
-    beverageDrinkerId INT,
+    beverageDrinkerId varchar(250),
     settleDate DATETIME 
 );
 
