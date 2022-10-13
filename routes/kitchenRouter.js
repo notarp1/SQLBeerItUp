@@ -53,12 +53,12 @@ kitchenRouter.route('/:id/beverages/stock/specific/:beverageId')
 
 kitchenRouter.route('/:id/beverages')
 .get(beverageController.getBeverages)
+.post(beverageController.addBeverages)
 
 kitchenRouter.route('/:id/beverages/all/:type')
 .get(beverageController.getBeverageTypes)
 
-kitchenRouter.route('/:id/beverages/add/:beverage')
-.post(beverageController.addBeverages)
+
 
 
 

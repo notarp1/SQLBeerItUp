@@ -19,7 +19,7 @@ CREATE TABLE if not exists Users
 CREATE Table if not exists Kitchens(
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     kName varchar(50) UNIQUE NOT NULL, 
-    kPin varchar(50) NOT NULL,
+    kPin INT NOT NULL,
     createdAt DATETIME
 );
 

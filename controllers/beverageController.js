@@ -22,7 +22,15 @@ exports.calculateMoneyUserIsOwed = async function (req, res) {
   try {
     var beverageOwnerId = req.params.id
     var moneyOwed = await db.query(
-      `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(price) as total  FROM Users t1 JOIN Beverages t2 ON t1.id = t2.beverageDrinkerId  WHERE beverageOwnerId = ${beverageOwnerId} AND beverageDrinkerId != ${beverageOwnerId} AND removedAt is not NULL AND settleDate is NULL GROUP BY uName`,
+      `SELECT t1.uName as name, 
+      t1.uPhone as phone, 
+      t1.id as uId, 
+      SUM(price) as total  
+      FROM Users t1 
+      JOIN Beverages t2 ON t1.id = t2.beverageDrinkerId  
+      WHERE beverageOwnerId = '${beverageOwnerId}'
+      AND beverageDrinkerId != '${beverageOwnerId}'
+      AND removedAt is not NULL AND settleDate is NULL GROUP BY uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
       res.status(200).json(moneyOwed)
@@ -37,7 +45,7 @@ exports.calculateMoneyUserOwes = async function (req, res) {
   try {
     var beverageDrinkerId = req.params.id
     var moneyOwed = await db.query(
-      `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = ${beverageDrinkerId} AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
+      `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${beverageDrinkerId}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
       res.status(200).json(moneyOwed)
@@ -119,6 +127,8 @@ exports.onBeverageTransactionAccept = async function (req, res) {
   try {
     var listOfObjectsToUpdate = req.body;
     var userId = req.params.uId;
+
+
 
    
     var dateTime = new Date();
@@ -224,7 +234,7 @@ exports.addBeverages = async function (req, res) {
 
     var iterations = beerInfo.quantity;
 
-    var beverageName = req.params.beverage;
+    //var beverageName = req.params.beverage;
     var kitchenId = req.params.id;
 
     if (kitchenId == -1) {
@@ -232,14 +242,14 @@ exports.addBeverages = async function (req, res) {
       return;
     }
 
-    var beverageTypeId = await getBeverageId(beverageName, kitchenId);
+    //var beverageTypeId = await getBeverageId(beverageName, kitchenId);
     var price =  parseInt(beerInfo.price);
     var beverageOwnerId = beerInfo.uId;
     var dateTime = new Date();
   
     await Beverage.bulkCreate(
       Array.from({ length: iterations }).map(() => ({
-        beverageTypeId: beverageTypeId,
+        beverageTypeId: beerInfo.beverageTypeId,
         price: price,
         kitchenId: kitchenId,
         beverageOwnerId: beverageOwnerId,

@@ -118,7 +118,7 @@ exports.postKitchenUser = async function (req, res) {
     
     if(user == null){
       await KitchenUser.create(kitchenUser);
-      res.status(201).send("true");
+      res.status(201).send(true);
     } else {
     
       res.status(400).send(Error("User already exists"));

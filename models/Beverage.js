@@ -17,7 +17,7 @@ const Beverage = db.define('Beverage', {
       allowNull: false
     },
     beverageOwnerId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
       },
     createdAt: {
@@ -29,7 +29,7 @@ const Beverage = db.define('Beverage', {
       allowNull: true
     },
     beverageDrinkerId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     settleDate: {

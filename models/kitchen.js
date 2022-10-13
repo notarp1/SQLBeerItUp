@@ -9,7 +9,7 @@ const Kitchen = db.define('Kitchen', {
       allowNull: false
     },
     kPin: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
