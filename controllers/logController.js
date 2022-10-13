@@ -1,11 +1,7 @@
 const { json } = require('express/lib/response');
 const res = require('express/lib/response');
 const db = require('../config/database');
-const Kitchens = require('../models/Kitchen');
-const KitchenUsers = require('../models/KitchenUser')
-const BeverageType = require('../models/BeverageType');
-const Beverages = require("../models/Beverage");
-const Users = require('../models/User');
+
 
 
 
@@ -24,7 +20,8 @@ exports.added = async function (req, res){
         `FROM Beverages t1 ` +
         `JOIN BeverageTypes t5 ON  t1.beverageTypeId = t5.id ` +
         `WHERE t1.beverageOwnerId = '${userId}' ` +
-        `GROUP BY t1.createdAt` 
+        `GROUP BY t1.createdAt ` +
+        `ORDER BY t1.createdAt DESC `
       
        
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
@@ -50,7 +47,9 @@ exports.consumed = async function (req, res){
         `JOIN BeverageTypes bevTypes ON  bevs.beverageTypeId = bevTypes.id ` +
         
         `WHERE bevs.BeverageDrinkerId = '${userId}' AND bevs.removedAt is not NULL ` +
-        `GROUP BY bevs.removedAt`
+        `GROUP BY bevs.removedAt ` +
+        `ORDER BY bevs.removedAt DESC `+ 
+        `LIMIT 15 ` 
 
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
         res.status(200).json(list)
@@ -74,7 +73,8 @@ exports.bought = async function (req, res){
         `JOIN Users owner ON Beverages.beverageOwnerId = owner.id ` +
         `JOIN BeverageTypes t5 ON  Beverages.beverageTypeId = t5.id ` +
         `WHERE Beverages.BeverageDrinkerId = '${userId}' AND settleDate is not NULL ` +
-        `GROUP BY Beverages.settleDate `  
+        `GROUP BY Beverages.settleDate ` +
+        `ORDER BY Beverages.settleDate DESC `
 
         
 
@@ -97,7 +97,8 @@ exports.sold = async function (req, res){
         `JOIN Users buyer ON bevs.beverageDrinkerId = buyer.id ` +
         `JOIN  BeverageTypes bevTypes ON  bevs.beverageTypeId = bevTypes.id ` +
         `WHERE bevs.beverageOwnerId = '${userId}' AND settleDate is not NULL ` +
-        `GROUP BY bevs.settleDate `
+        `GROUP BY bevs.settleDate ` +
+        `ORDER BY bevs.settleDate DESC `
 
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
         res.status(200).json(list)
@@ -112,9 +113,14 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       
       let kId = req.params.id
       let year = req.params.year 
-      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and settleDate BETWEEN '${year}-1-01' AND '${year}-12-31' GROUP BY t2.uName ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and removedAt BETWEEN '${year}-1-01' AND '${year}-12-31' GROUP BY t2.id ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
   
-      res.status(200).json(list)
+      await list.forEach((item, i) => {
+        item.id = i + 1;
+      });
+  
+      
+      res.status(200).json(listWithIds)
   
     } catch (error) {
       sendErrorCode(error, res);
@@ -131,7 +137,18 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       let month = parseInt(req.params.month)
       let year = req.params.year
   
-      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and settleDate BETWEEN '${year}-${month}-01' AND LAST_DAY('${year}-${month}-01') GROUP BY t2.uName ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+      var list = await db.query(`
+      SELECT t2.uName as name, 
+      COUNT(*) as count 
+      FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
+      WHERE kitchenId = ${kId} 
+      and removedAt BETWEEN '${year}-${month}-01' AND LAST_DAY('${year}-${month}-01') 
+      GROUP BY t2.id 
+      ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+
+      await list.forEach((item, i) => {
+        item.id = i + 1;
+      });
   
       
       res.status(200).json(list)
