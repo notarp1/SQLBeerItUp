@@ -7,7 +7,7 @@ const stringHash = require("string-hash");
 const BeverageType = require("../models/BeverageType");
 const sequelize = require("sequelize");
 const User = require("../models/User");
-
+const ShoppingCart = require("../models/ShoppingCartEntry")
 
 
 
@@ -27,12 +27,12 @@ exports.createKitchen = async function (req, res) {
   }
 };
 
-exports.nameExists = async function (req, res){
+exports.isKitchenNameAvailable = async function (req, res){
   try {
       var kitchenList = await Kitchens.findAll({where: {kName: req.params.name}})
     
-      if(kitchenList.length > 0) res.status(200).send(false);
-      else res.status(200).send(true);;
+      if(kitchenList.length > 0) res.status(409).send("false");
+      else res.status(200).send("true");;
   } catch (e) {
       console.log(e.code)
       res.status(400).send(e);
@@ -70,12 +70,11 @@ exports.getKitchen = async function (req, res) {
 
 
 exports.kitchenAuthentication = async function (req, res){
+
   try {
       var kitchenAuthObject = req.body
       var kitchen = await Kitchens.findOne({where: {kName: kitchenAuthObject.kName.trim()}})
-
-      console.log(kitchen.kPin)
-      console.log(kitchenAuthObject.kPin)
+      
 
       if(kitchen.kPin == kitchenAuthObject.kPin){
         res.status(200).json(kitchen);
@@ -118,7 +117,7 @@ exports.postKitchenUser = async function (req, res) {
     
     if(user == null){
       await KitchenUser.create(kitchenUser);
-      res.status(201).send(true);
+      res.status(201).send("true");
     } else {
     
       res.status(400).send(Error("User already exists"));
@@ -169,6 +168,7 @@ exports.getKitchenUsers = async function (req, res) {
     handleDatabaseError(e, res);
   }
 };
+
 
 
 

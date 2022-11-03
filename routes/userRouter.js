@@ -18,8 +18,6 @@ userRouter.route('/:uId/deviceToken/set/:deviceToken')
 
 
 
-userRouter.route('/email_check/:email')
-.get(userController.emailExists)
 
 userRouter.route('/phone_check/registered/:phone')
 .get(userController.phoneNumberIsRegistrered)

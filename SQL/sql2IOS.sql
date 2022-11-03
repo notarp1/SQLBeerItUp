@@ -12,6 +12,17 @@ CREATE TABLE if not exists Users
     
 );
 
+CREATE TABLE if not exists ShoppingCarts
+(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    kId INT NOT NULL,
+    itemdesc varchar(25) NOT NULL,
+    createdAt DATETIME NOT NULL,
+    removedAt DATETIME,
+    buyer varchar(255),
+    price INT 
+
+);
 
 
 

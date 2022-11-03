@@ -80,7 +80,7 @@ exports.makePayment = async function (req, res){
         updateOnDuplicate: ["settleDate"],
       });
 
-      res.status(200).send(true)
+      res.status(200).json("true")
 
   } catch (error) {
     console.log(error)

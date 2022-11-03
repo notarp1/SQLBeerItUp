@@ -53,27 +53,21 @@ exports.getDeviceToken = async function (req, res){
 exports.isAssigned = async function (req, res){
     try {
         var kitchenlist = await KitchenUsers.findAll({where: {uId: req.params.id}})
-        var kitchen = kitchenlist[0]
-        console.log(kitchenlist.length)
-        if(kitchenlist.length > 0) res.status(201).json(1);
-        else res.status(201).json(-1);
+        var joinedKitchens = []
+        
+        await kitchenlist.forEach((item) => {
+            joinedKitchens.push(item.kId)
+            joinedKitchens.push(item.kId)
+        });
+    
+        if(kitchenlist.length > 0) res.status(201).json(joinedKitchens);
+        else res.status(200).send([]);
     } catch (e) {
         console.log(e.code)
         res.send(400).send(e);
     }
 }
 
-exports.emailExists = async function (req, res){
-    try {
-        var userList = await Users.findAll({where: {uEmail: req.params.email}})
-        var users = userList[0]
-        if(userList.length > 0) res.status(409).send({message: "A user is already registrered with this email"});
-        else res.status(200).send(true);;
-    } catch (e) {
-        console.log(e.code)
-        res.status(400).send(e);
-    }
-}
 
 exports.phoneNumberIsAvailable = async function (req, res){
     try {
@@ -83,8 +77,7 @@ exports.phoneNumberIsAvailable = async function (req, res){
             console.log("fail.")
             res.status(409).send({message: "A user is already registrered with this number!"});
         }else {
-            console.log("success.")
-            res.status(200).send(true)
+            res.status(200).json("true")
         }
     } catch (e) {
         console.log(e.code)
@@ -97,11 +90,9 @@ exports.phoneNumberIsRegistrered = async function (req, res){
         var userList = await Users.findAll({where: {uPhone: req.params.phone}})
         var users = userList[0]
         if(userList.length > 0) {
-            console.log("fail.")
-            res.status(200).send(true)
+            res.status(200).json("true")
            
         }else {
-            console.log("success.")
             res.status(405).send({message: "No account is registrered with this number!"});
         }
     } catch (e) {

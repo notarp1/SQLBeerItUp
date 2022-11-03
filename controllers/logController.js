@@ -5,6 +5,7 @@ const db = require('../config/database');
 
 
 
+
 exports.checkInternetConnection = async function (req, res){
     res.status(200).send("I'm up and running")
 }
@@ -98,7 +99,8 @@ exports.sold = async function (req, res){
         `JOIN  BeverageTypes bevTypes ON  bevs.beverageTypeId = bevTypes.id ` +
         `WHERE bevs.beverageOwnerId = '${userId}' AND settleDate is not NULL ` +
         `GROUP BY bevs.settleDate ` +
-        `ORDER BY bevs.settleDate DESC `
+        `ORDER BY bevs.settleDate DESC 
+         LIMIT 4 `
 
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
         res.status(200).json(list)
@@ -113,14 +115,23 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       
       let kId = req.params.id
       let year = req.params.year 
-      var list = await db.query(`SELECT t2.uName as name, COUNT(*) as count FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id WHERE kitchenId = ${kId} and removedAt BETWEEN '${year}-1-01' AND '${year}-12-31' GROUP BY t2.id ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+      var queryString = `SELECT 
+      t2.uName as name, 
+      COUNT(*) as count 
+      FROM Beverages t1 
+      JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
+      WHERE kitchenId = ${kId} and removedAt BETWEEN '${year}-1-01' AND '${year}-12-31' 
+      GROUP BY t2.id ORDER BY count DESC`
+      
+
+      var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
   
       await list.forEach((item, i) => {
         item.id = i + 1;
       });
   
       
-      res.status(200).json(listWithIds)
+      res.status(200).json(list)
   
     } catch (error) {
       sendErrorCode(error, res);

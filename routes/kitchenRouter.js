@@ -4,6 +4,7 @@ const kitchenRouter = express.Router()
 const kitchenController = require('../controllers/kitchenController')
 const beverageController = require('../controllers/beverageController')
 const logController = require('../controllers/logController')
+const shoppingCartController = require('../controllers/shoppingCartController')
 
 
 kitchenRouter.route('/')
@@ -14,7 +15,8 @@ kitchenRouter.route('/auth')
 .post(kitchenController.kitchenAuthentication)
 
 kitchenRouter.route('/name_check/:name')
-.get(kitchenController.nameExists)
+.get(kitchenController.isKitchenNameAvailable)
+
 
 
 kitchenRouter.route('/login')
@@ -23,6 +25,13 @@ kitchenRouter.route('/login')
 
 kitchenRouter.route('/:id')
 .get(kitchenController.getKitchen)
+
+kitchenRouter.route('/:id/shopping_cart')
+.get(shoppingCartController.getAllItems)
+.post(shoppingCartController.addItemToCart)
+.put(shoppingCartController.updateCartItem)
+
+
 
 kitchenRouter.route('/:id/admins')
 .post(kitchenController.giveUserAdminRights)
