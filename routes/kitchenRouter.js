@@ -11,6 +11,8 @@ kitchenRouter.route('/')
 .get(kitchenController.getAllKitchens)
 .post(kitchenController.createKitchen)
 
+
+
 kitchenRouter.route('/auth')
 .post(kitchenController.kitchenAuthentication)
 
@@ -36,15 +38,17 @@ kitchenRouter.route('/:id/shopping_cart')
 kitchenRouter.route('/:id/admins')
 .post(kitchenController.giveUserAdminRights)
 
-
+kitchenRouter.route('/:id/isAdmin/:uId')
+.get(kitchenController.isAdmin)
 
 
 kitchenRouter.route('/:id/users/:uId')
 .get(kitchenController.getKitchenUser)
-kitchenRouter.route('/:id/users')
-.get(kitchenController.getKitchenUsers)
+.delete(kitchenController.deleteKitchenUser)
+
 
 kitchenRouter.route('/:id/users')
+.get(kitchenController.getKitchenUsers)
 .post(kitchenController.postKitchenUser)
 
 

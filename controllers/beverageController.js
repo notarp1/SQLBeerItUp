@@ -44,11 +44,12 @@ exports.calculateMoneyUserIsOwed = async function (req, res) {
 exports.calculateMoneyUserOwes = async function (req, res) {
   try {
     var beverageDrinkerId = req.params.id
-    var moneyOwed = await db.query(
+    var moneyOwes = await db.query(
       `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${beverageDrinkerId}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
-      res.status(200).json(moneyOwed)
+    
+      res.status(200).json(moneyOwes)
 
   } catch (error) {
     sendErrorCode(error, res);

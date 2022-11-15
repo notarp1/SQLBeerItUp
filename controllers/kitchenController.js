@@ -12,6 +12,25 @@ const ShoppingCart = require("../models/ShoppingCartEntry")
 
 
 
+exports.isAdmin = async function (req, res){
+  try {
+    
+    var kId = req.params.id
+    var userId = req.params.uId
+    var user = await KitchenUser.findAll({where: { kId: kId, isAdmin: 1, uId: userId }})
+
+    if(user.length > 0) {
+      res.status(200).json(1)
+    } else {
+      res.status(200).json(0)
+    }
+      
+
+
+  } catch (e) {
+    handleDatabaseError(e, res);
+  }
+}
 exports.createKitchen = async function (req, res) {
   try {
     
@@ -88,12 +107,62 @@ exports.kitchenAuthentication = async function (req, res){
   }
 }
 
+exports.deleteKitchenUser = async function (req, res) {
+  try {
+    var id = req.params.id
+    var userId = req.params.uId
+
+    console.log("HAWD")
+
+
+    var moneyOwed = await db.query(
+      `SELECT t1.uName as name, 
+      t1.uPhone as phone, 
+      t1.id as uId, 
+      SUM(price) as total  
+      FROM Users t1 
+      JOIN Beverages t2 ON t1.id = t2.beverageDrinkerId  
+      WHERE beverageOwnerId = '${userId}'
+      AND beverageDrinkerId != '${userId}'
+      AND removedAt is not NULL AND settleDate is NULL GROUP BY uName`,
+      { type: sequelize.QueryTypes.SELECT }
+    );
+
+    var moneyOwes = await db.query(
+      `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${userId}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
+      { type: sequelize.QueryTypes.SELECT }
+    );
+
+    if(moneyOwed.length > 0 || moneyOwes.length > 0){
+      res.status(409).send({message: "The user has unsettled transactions and cannot be removed!"});
+      return
+    }
+
+
+  
+    await KitchenUser.destroy({where: {kId: id, uId: userId}})
+    res.status(200).send("true");
+  } catch (e) {
+    handleDatabaseError(e, res);
+  }
+};
+
 exports.giveUserAdminRights = async function (req, res) {
   try {
     var kitchenAdmin = req.body
+
+    if(kitchenAdmin.value == false){
+
+      var list = await KitchenUser.findAll({where: {kId: kitchenAdmin.kId, isAdmin: true}})
     
-    await KitchenUser.update({isAdmin: true}, {where: {uId: kitchenAdmin.uId}})
-    res.status(200).send(true);
+      if(list.length == 1){
+        res.status(409).send({message: "At least one person must be admin"});
+        return
+      }
+    }
+    
+    await KitchenUser.update({isAdmin: kitchenAdmin.value}, {where: {uId: kitchenAdmin.uId}})
+    res.status(200).send("true");
   } catch (e) {
     handleDatabaseError(e, res);
   }
@@ -132,6 +201,7 @@ exports.postKitchenUser = async function (req, res) {
 
 exports.getKitchenUser = async function (req, res) {
   try {
+    
     var kitchen = await Kitchens.findOne({where: {id: req.params.id}})
  
     if(kitchen == null){
@@ -151,19 +221,22 @@ exports.getKitchenUser = async function (req, res) {
 
 exports.getKitchenUsers = async function (req, res) {
   try {
-    var kitchen = await Kitchens.findOne({where: {id: req.params.id}})
- 
-    if(kitchen == null){
-      res.status(404).send({message: "Kitchen Does Not Exist"})
-      return
-    }
+    let id = req.params.id
+
+    let queryString = 
+        `SELECT 
+        kitchenUser.uId as id, 
+        u.uName as uName,
+        u.uPhone as phone
+        FROM KitchenUsers kitchenUser 
+        JOIN Users u 
+        ON u.id = kitchenUser.uId 
+        WHERE kitchenUser.kId = ${id}`
+
+    var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
+
     
-    var users = await db.query(
-      `SELECT t2.id, t2.uName, t2.uPhone, t2.uPin from KitchenUsers t1 JOIN Users t2 ON t1.uId = t2.id WHERE t1.kId = ${req.params.id}`,
-      { type: sequelize.QueryTypes.SELECT }
-    );
-    
-    res.status(200).json(users);
+    res.status(200).json(list);
   } catch (e) {
     handleDatabaseError(e, res);
   }
