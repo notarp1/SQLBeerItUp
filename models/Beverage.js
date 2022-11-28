@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const db = require('../config/database')
 
-const Beverages = db.define('Beverage', {
+const Beverage = db.define('Beverage', {
     // Model attributes are defined here
     
     beverageTypeId: {
@@ -17,7 +17,7 @@ const Beverages = db.define('Beverage', {
       allowNull: false
     },
     beverageOwnerId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false
       },
     createdAt: {
@@ -29,7 +29,7 @@ const Beverages = db.define('Beverage', {
       allowNull: true
     },
     beverageDrinkerId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     settleDate: {
@@ -44,4 +44,4 @@ const Beverages = db.define('Beverage', {
   timestamps: false
   });
   
-module.exports = Beverages
+module.exports = Beverage

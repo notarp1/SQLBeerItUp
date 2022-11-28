@@ -4,21 +4,12 @@ const db = require('../config/database')
 
 const Kitchen = db.define('Kitchen', {
     // Model attributes are defined here
-    
     kName: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    kEmail: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    kPass: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
     kPin: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {

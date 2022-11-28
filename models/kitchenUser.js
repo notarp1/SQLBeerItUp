@@ -8,7 +8,7 @@ const KitchenUser = db.define('KitchenUsers', {
     allowNull: false
   },
   uId:{
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false
   },
   isAdmin: {
