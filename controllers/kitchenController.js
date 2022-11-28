@@ -46,6 +46,20 @@ exports.createKitchen = async function (req, res) {
   }
 };
 
+exports.addBeverageType = async function (req, res) {
+  try {
+    
+    var bevType = req.body
+  
+    await BeverageType.create(bevType);
+
+    res.status(201).send("Beverage Type Created!");
+  } catch (e) {
+    handleDatabaseError(e, res);
+  }
+};
+
+
 exports.isKitchenNameAvailable = async function (req, res){
   try {
       var kitchenList = await Kitchens.findAll({where: {kName: req.params.name}})

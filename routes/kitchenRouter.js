@@ -24,6 +24,8 @@ kitchenRouter.route('/name_check/:name')
 kitchenRouter.route('/login')
 .post(kitchenController.login)
 
+kitchenRouter.route('/:id/beverages/type')
+.post(kitchenController.addBeverageType)
 
 kitchenRouter.route('/:id')
 .get(kitchenController.getKitchen)
