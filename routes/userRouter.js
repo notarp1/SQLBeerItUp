@@ -7,14 +7,6 @@ const logController = require('../controllers/logController')
 userRouter.route('/')
 .post(userController.createUser)
 
-userRouter.route('/:uId/deviceToken')
-.get(userController.getDeviceToken)
-
-
-userRouter.route('/:uId/deviceToken/set/:deviceToken')
-.post(userController.setDeviceToken)
-
-
 
 
 
@@ -44,9 +36,9 @@ userRouter.route('/test')
 
 
 userRouter.route('/:id')
-.delete(userController.deleteUser)
 .put(userController.updateUser)
 .get(userController.getUser)
+.delete(userController.deleteUser)
 
 userRouter.route('/:id/owed')
 .get(beverageController.calculateMoneyUserIsOwed)
@@ -59,6 +51,8 @@ userRouter.route('/:id/pay/:recipient')
 
 
 
+userRouter.route('/:id/isAdminOnKitchens')
+.get(userController.isAdminOnKitchens)
 
 userRouter.route('/login')
 .post(userController.login)

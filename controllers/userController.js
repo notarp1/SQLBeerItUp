@@ -3,53 +3,38 @@ const res = require('express/lib/response');
 const db = require('../config/database');
 const Users = require('../models/User');
 const KitchenUsers = require('../models/KitchenUser');
-const DeviceTokens = require('../models/DeviceTokens')
+
 const NotificationService = require('../services/notificationService');
 const sequelize = require("sequelize");
 
-exports.notifTest = async function (req, res){
-    var key = "dJDCvLFYSn26I9ZejkT4qj:APA91bEvgcXvtJMkXphjLJGFBIndbSitemfGjpCuUi-6JbbnvVW8C6jjy8AHx1q1JvAYk6REQPOqMcSZsvRKs-nu8ayW0YqunDvGqzPGLRKSdqEDdr3WBL9wZ0bilNY5ryawIDGqBYA2";
-    var payload = {data: {
-        MyKey1: "Hello"
-    }}
-    var options = {
-        priority: "high",
-        timeToLive: 60*60*24
-    }
+const KitchenUser = require("../models/KitchenUser");
 
+
+exports.isAdminOnKitchens = async function (req, res){
     try {
-        var response = await NotificationService.messaging().sendToDevice(key, payload, options)
+      
     
-        res.status(200).json(response)
-    } catch (e) {
-        res.status(400).send(e);
-    }
+        let onlyAdmin = false
+        var userId = req.params.id
 
     
-}
 
-exports.setDeviceToken = async function (req, res){
-    try {
-        await DeviceTokens.upsert({uId: req.params.uId, deviceToken: req.params.deviceToken})
-        res.status(200).send({success: true})
+        var user =  await KitchenUser.findAll({where: { isAdmin: 1, uId: userId }})
+
+        if(user.length > 0) {
+            res.status(200).json(1)
+          } else {
+            res.status(200).json(0)
+          }
+   
+
+
     } catch (e) {
-        console.log(e.code)
-        res.status(400).send(e);
+      handleDatabaseError(e, res);
     }
-}
+  }
 
-exports.getDeviceToken = async function (req, res){
-    try {
-        var token = await DeviceTokens.findOne({where: {uId: req.params.uId} })
-        res.status(200).json({user: token.deviceToken})
-    } catch (e) {
-        console.log(e.code)
-        res.status(400).send(e);
-    }
-}
-
-
-
+ 
 exports.isAssigned = async function (req, res){
     try {
         var kitchenlist = await KitchenUsers.findAll({where: {uId: req.params.id}})
@@ -146,18 +131,48 @@ exports.login = async function (req, res) {
 
 
 
-exports.deleteUser = async function (req, res) {
+exports.deleteUser = async function (req, res){
+   
     try {
-        await Users.destroy({
-            where: {
-                userPhone: req.params.id //this will be your id that you want to delete
-            }
-        })
-        res.status(200).send(true)
 
+        var id = req.params.id
+        var moneyOwed = await db.query(
+            `SELECT t1.uName as name, 
+            t1.uPhone as phone, 
+            t1.id as uId, 
+            SUM(price) as total  
+            FROM Users t1 
+            JOIN Beverages t2 ON t1.id = t2.beverageDrinkerId  
+            WHERE beverageOwnerId = '${id}'
+            AND beverageDrinkerId != '${id}'
+            AND removedAt is not NULL AND settleDate is NULL GROUP BY uName`,
+            { type: sequelize.QueryTypes.SELECT }
+        )
+    
+        var moneyOwes = await db.query(
+            `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${id}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
+            { type: sequelize.QueryTypes.SELECT }
+        )
+    
+        if(moneyOwed.length > 0 || moneyOwes.length > 0){
+            res.status(409).send({message: "You have unsettled transactions, settle them before removing your account!"});
+            return
+        }
+
+        
+        var query = `DELETE FROM Users WHERE id = '${id}'`
+
+        await db.query(query,{ type: sequelize.QueryTypes.DELETE })
+        res.status(200).send("Success");
+   
     } catch (e) {
-        sendErrorCode(e, res)
+    
+        console.log(e.code)
+        res.send(400).send(e);
     }
+
+
+
 }
 
 exports.updateUser = async function (req, res) {
@@ -199,3 +214,43 @@ function sendErrorCode(e, res) {
             break;
     }
 }
+
+exports.notifTest = async function (req, res){
+    var key = "dJDCvLFYSn26I9ZejkT4qj:APA91bEvgcXvtJMkXphjLJGFBIndbSitemfGjpCuUi-6JbbnvVW8C6jjy8AHx1q1JvAYk6REQPOqMcSZsvRKs-nu8ayW0YqunDvGqzPGLRKSdqEDdr3WBL9wZ0bilNY5ryawIDGqBYA2";
+    var payload = {data: {
+        MyKey1: "Hello"
+    }}
+    var options = {
+        priority: "high",
+        timeToLive: 60*60*24
+    }
+
+    try {
+        var response = await NotificationService.messaging().sendToDevice(key, payload, options)
+    
+        res.status(200).json(response)
+    } catch (e) {
+        res.status(400).send(e);
+    }
+
+    
+}
+
+
+
+function handleDatabaseError(e, res) {
+    switch (e.name) {
+      case "SequelizeUniqueConstraintError":
+        res.status(409).send({message: e.message});
+        break;
+      case "SequelizeDatabaseError":
+        res.status(409).send(e);
+        break;
+      case "SequelizeValidationError":
+        res.status(409).send(e);
+        break;
+      default:
+        res.status(400).send(e);
+    }
+  }
+

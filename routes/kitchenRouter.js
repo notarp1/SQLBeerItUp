@@ -44,6 +44,11 @@ kitchenRouter.route('/:id/isAdmin/:uId')
 .get(kitchenController.isAdmin)
 
 
+kitchenRouter.route('/:id/isOnlyAdmin/:uId')
+.get(kitchenController.isTheOnlyAdminSpecific)
+
+
+
 kitchenRouter.route('/:id/users/:uId')
 .get(kitchenController.getKitchenUser)
 .delete(kitchenController.deleteKitchenUser)

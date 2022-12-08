@@ -73,7 +73,7 @@ exports.bought = async function (req, res){
         `FROM Beverages Beverages ` +
         `JOIN Users owner ON Beverages.beverageOwnerId = owner.id ` +
         `JOIN BeverageTypes t5 ON  Beverages.beverageTypeId = t5.id ` +
-        `WHERE Beverages.BeverageDrinkerId = '${userId}' AND settleDate is not NULL ` +
+        `WHERE Beverages.beverageDrinkerId = '${userId}' AND Beverages.beverageOwnerId != '${userId}' AND settleDate is not NULL ` +
         `GROUP BY Beverages.settleDate ` +
         `ORDER BY Beverages.settleDate DESC `
 
@@ -97,7 +97,7 @@ exports.sold = async function (req, res){
         `FROM Beverages bevs ` +
         `JOIN Users buyer ON bevs.beverageDrinkerId = buyer.id ` +
         `JOIN  BeverageTypes bevTypes ON  bevs.beverageTypeId = bevTypes.id ` +
-        `WHERE bevs.beverageOwnerId = '${userId}' AND settleDate is not NULL ` +
+        `WHERE bevs.beverageOwnerId = '${userId}' AND bevs.beverageDrinkerId != '${userId}' AND settleDate is not NULL ` +
         `GROUP BY bevs.settleDate ` +
         `ORDER BY bevs.settleDate DESC 
          LIMIT 4 `
@@ -153,7 +153,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       COUNT(*) as count 
       FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
       WHERE kitchenId = ${kId} 
-      and removedAt BETWEEN '${year}-${month}-01' AND LAST_DAY('${year}-${month}-01') 
+      and removedAt BETWEEN '${year}-${month}-01' AND LAST_DAY('${year}-${month}-01') + 1 
       GROUP BY t2.id 
       ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
 

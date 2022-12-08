@@ -31,6 +31,26 @@ exports.isAdmin = async function (req, res){
     handleDatabaseError(e, res);
   }
 }
+
+exports.isTheOnlyAdminSpecific = async function (req, res){
+  try {
+    
+    var kId = req.params.id
+
+    var users = await KitchenUser.findAll({where: { kId: kId, isAdmin: 1}})
+
+    if(users.length > 1) {
+      res.status(200).json(0)
+    } else {
+      res.status(200).json(0)
+    }
+    
+
+
+  } catch (e) {
+    handleDatabaseError(e, res);
+  }
+}
 exports.createKitchen = async function (req, res) {
   try {
     
@@ -120,6 +140,8 @@ exports.kitchenAuthentication = async function (req, res){
      handleDatabaseError(e, res);
   }
 }
+
+
 
 exports.deleteKitchenUser = async function (req, res) {
   try {

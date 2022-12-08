@@ -1,4 +1,4 @@
-use BeerItUp_dev_DB;
+use koleskabet_db;
 
 CREATE TABLE if not exists Users
 (
@@ -7,23 +7,7 @@ CREATE TABLE if not exists Users
     uPhone varchar(20) UNIQUE NOT NULL,
     uPin INT NOT NULL,
     createdAt DATETIME
-
-    
-    
 );
-
-CREATE TABLE if not exists ShoppingCarts
-(
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    kId INT NOT NULL,
-    itemdesc varchar(25) NOT NULL,
-    createdAt DATETIME NOT NULL,
-    removedAt DATETIME,
-    buyer varchar(255),
-    price INT 
-
-);
-
 
 
 
@@ -35,6 +19,20 @@ CREATE Table if not exists Kitchens(
 );
 
 
+CREATE TABLE if not exists ShoppingCarts
+(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    kId INT NOT NULL,
+    itemdesc varchar(25) NOT NULL,
+    createdAt DATETIME NOT NULL,
+    removedAt DATETIME,
+    buyer varchar(255),
+    price INT,
+    FOREIGN KEY (kId) REFERENCES Kitchens(id),
+    FOREIGN KEY (buyer) REFERENCES Users(id) ON DELETE CASCADE
+
+);
+
 
 CREATE TABLE if not exists KitchenUsers
 (
@@ -42,22 +40,24 @@ CREATE TABLE if not exists KitchenUsers
     kId INT NOT NULL,
     uId varchar(255) NOT NULL,
     isAdmin TINYINT NOT NULL,
-    createdAt DATETIME
+    createdAt DATETIME,
+
+    FOREIGN KEY (kId) REFERENCES Kitchens(id),
+    FOREIGN KEY (uId) REFERENCES Users(id) ON DELETE CASCADE
    
 );
-
-
-
 
  CREATE TABLE if not exists BeverageTypes (
       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
       kId INT NOT NULL,
       beverageName varchar(50) NOT NULL, 
       beverageType varchar(10) NOT NULL,
-      pictureUrl varchar(50) NOT NULL
+      pictureUrl varchar(50) NOT NULL,
+
+      
+     FOREIGN KEY (kId) REFERENCES Kitchens(id)
       
 );
-
 
 
 CREATE TABLE if not exists Beverages
@@ -70,15 +70,10 @@ CREATE TABLE if not exists Beverages
     createdAt DATETIME NOT NULL,
     removedAt DATETIME,
     beverageDrinkerId varchar(250),
-    settleDate DATETIME 
-);
+    settleDate DATETIME,
 
-
-CREATE TABLE if not exists DeviceTokens
-(
-    uId INT NOT NULL PRIMARY KEY, 
-    deviceToken varchar(250) UNIQUE NOT NULL,
-    updatedAt   DATETIME
-);
+    
+    FOREIGN KEY (kitchenId) REFERENCES Kitchens(id) 
+)
 
 
