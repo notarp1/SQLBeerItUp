@@ -114,17 +114,19 @@ exports.calculateYearlyLeaderboard = async function (req, res){
     try {
       
       let kId = req.params.id
-      let year = req.params.year 
-      var queryString = `SELECT 
-      t2.uName as name, 
-      COUNT(*) as count 
-      FROM Beverages t1 
-      JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
-      WHERE kitchenId = ${kId} and removedAt BETWEEN '${year}-1-01' AND '${year}-12-31' 
-      GROUP BY t2.id ORDER BY count DESC`
-      
+      let year = parseInt(req.params.year)
+      let nextYear = year +1
 
-      var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
+      var list = await db.query(`
+      SELECT t2.uName as name, 
+      COUNT(*) as count 
+      FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
+      WHERE kitchenId = ${kId} 
+      and (removedAt  >= '${year}-01-01' AND  removedAt  < '${nextYear}-01-01')
+	  GROUP BY t2.id 
+      ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
+
+     
   
       await list.forEach((item, i) => {
         item.id = i + 1;
@@ -146,15 +148,22 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       
       let kId = req.params.id
       let month = parseInt(req.params.month)
-      let year = req.params.year
-  
+      let year = parseInt(req.params.year)
+      let nextMonth = month + 1
+      let  nextYear  = year
+
+      if(nextMonth == 13){
+        nextMonth = 1
+        nextYear = year + 1
+      }
+
       var list = await db.query(`
       SELECT t2.uName as name, 
       COUNT(*) as count 
       FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
       WHERE kitchenId = ${kId} 
-      and removedAt BETWEEN '${year}-${month}-01' AND LAST_DAY('${year}-${month}-01') + 1 
-      GROUP BY t2.id 
+      and (removedAt  >= '${year}-${month}-01' AND  removedAt  < '${nextYear}-${nextMonth}-01')
+	  GROUP BY t2.id 
       ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
 
       await list.forEach((item, i) => {
@@ -174,6 +183,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
 
 
 function sendErrorCode(e, res) {
+    console.log(e)
     switch (e.name) {
         case "SequelizeUniqueConstraintError":
             res.status(409).send(e);
