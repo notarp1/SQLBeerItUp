@@ -4,7 +4,6 @@ const db = require('../config/database');
 const Users = require('../models/User');
 const KitchenUsers = require('../models/KitchenUser');
 
-const NotificationService = require('../services/notificationService');
 const sequelize = require("sequelize");
 
 const KitchenUser = require("../models/KitchenUser");
@@ -57,12 +56,11 @@ exports.isAssigned = async function (req, res){
 exports.phoneNumberIsAvailable = async function (req, res){
     try {
         var userList = await Users.findAll({where: {uPhone: req.params.phone}})
-        var users = userList[0]
         if(userList.length > 0) {
             console.log("fail.")
             res.status(409).send({message: "A user is already registrered with this number!"});
         }else {
-            res.status(200).json("true")
+            res.status(200).send("true")
         }
     } catch (e) {
         console.log(e.code)
@@ -215,26 +213,6 @@ function sendErrorCode(e, res) {
     }
 }
 
-exports.notifTest = async function (req, res){
-    var key = "dJDCvLFYSn26I9ZejkT4qj:APA91bEvgcXvtJMkXphjLJGFBIndbSitemfGjpCuUi-6JbbnvVW8C6jjy8AHx1q1JvAYk6REQPOqMcSZsvRKs-nu8ayW0YqunDvGqzPGLRKSdqEDdr3WBL9wZ0bilNY5ryawIDGqBYA2";
-    var payload = {data: {
-        MyKey1: "Hello"
-    }}
-    var options = {
-        priority: "high",
-        timeToLive: 60*60*24
-    }
-
-    try {
-        var response = await NotificationService.messaging().sendToDevice(key, payload, options)
-    
-        res.status(200).json(response)
-    } catch (e) {
-        res.status(400).send(e);
-    }
-
-    
-}
 
 
 
