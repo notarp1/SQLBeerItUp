@@ -30,15 +30,15 @@ userRouter.route('/:id/logs/beverages/bought')
 userRouter.route('/:id/logs/beverages/sold')
 .get(logController.sold)
 
-userRouter.route('/test')
-.get(userController.notifTest)
-
 
 
 userRouter.route('/:id')
 .put(userController.updateUser)
 .get(userController.getUser)
 .delete(userController.deleteUser)
+
+userRouter.route('/:id/:kId')
+.delete(userController.deleteUserAndKitchen)
 
 userRouter.route('/:id/owed')
 .get(beverageController.calculateMoneyUserIsOwed)

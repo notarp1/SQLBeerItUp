@@ -26,10 +26,8 @@ exports.isAdminOnKitchens = async function (req, res){
             res.status(200).json(0)
           }
    
-
-
     } catch (e) {
-      handleDatabaseError(e, res);
+        handleError(e, res);
     }
   }
 
@@ -94,7 +92,7 @@ exports.createUser = async function (req, res) {
         res.status(201).json(userRes)
 
     } catch (e) {
-        sendErrorCode(e, res);
+        handleError(e, res);
     }
     // db.query("INSERT INTO Users (UserID, UserName, UserPhone) VALUES ('123', 'Christian', '22270704')")   
 }
@@ -173,6 +171,56 @@ exports.deleteUser = async function (req, res){
 
 }
 
+
+exports.deleteUserAndKitchen = async function (req, res){
+   
+    try {
+
+        var id = req.params.id
+        var kId = req.params.kId
+        var moneyOwed = await db.query(
+            `SELECT t1.uName as name, 
+            t1.uPhone as phone, 
+            t1.id as uId, 
+            SUM(price) as total  
+            FROM Users t1 
+            JOIN Beverages t2 ON t1.id = t2.beverageDrinkerId  
+            WHERE beverageOwnerId = '${id}'
+            AND beverageDrinkerId != '${id}'
+            AND removedAt is not NULL AND settleDate is NULL GROUP BY uName`,
+            { type: sequelize.QueryTypes.SELECT }
+        )
+    
+        var moneyOwes = await db.query(
+            `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${id}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
+            { type: sequelize.QueryTypes.SELECT }
+        )
+    
+        if(moneyOwed.length > 0 || moneyOwes.length > 0){
+            res.status(409).send({message: "You have unsettled transactions, settle them before removing your account!"});
+            return
+        }
+
+        
+        var query = `DELETE FROM Users WHERE id = '${id}'`
+       
+
+        await db.query(query,{ type: sequelize.QueryTypes.DELETE })
+
+        var query2 = `DELETE FROM Kitchens WHERE id = '${kId}'`
+        await db.query(query2,{ type: sequelize.QueryTypes.DELETE })
+        res.status(200).send("Success");
+   
+    } catch (e) {
+    
+        console.log(e.code)
+        res.send(400).send(e);
+    }
+
+
+
+}
+
 exports.updateUser = async function (req, res) {
     try {
         var updatedUser = req.body
@@ -182,7 +230,7 @@ exports.updateUser = async function (req, res) {
       
         res.status(200).send(true)
     } catch (e) {
-        sendErrorCode(e, res)
+        handleError(e, res)
     }
 }
 
@@ -194,21 +242,24 @@ exports.getUser = async function (req, res) {
         res.status(200).json(user)
     } catch (e) {
         console.log("error")
-        sendErrorCode(e, res)
+        handleError(e, res)
     }
 }
 
 
-function sendErrorCode(e, res) {
+function handleError(e, res) {
     switch (e.name) {
         case "SequelizeUniqueConstraintError":
             res.status(409).send(e);
             break;
         case "SequelizeDatabaseError":
-            res.status(409).send(e);
+            res.status(500).send(e);
+            break;
+        case "SequelizeValidationError":
+            res.status(500).send(e);
             break;
         default:
-            res.status(400).send(e);
+            res.status(500).send(e);
             break;
     }
 }
@@ -216,19 +267,5 @@ function sendErrorCode(e, res) {
 
 
 
-function handleDatabaseError(e, res) {
-    switch (e.name) {
-      case "SequelizeUniqueConstraintError":
-        res.status(409).send({message: e.message});
-        break;
-      case "SequelizeDatabaseError":
-        res.status(409).send(e);
-        break;
-      case "SequelizeValidationError":
-        res.status(409).send(e);
-        break;
-      default:
-        res.status(400).send(e);
-    }
-  }
+
 

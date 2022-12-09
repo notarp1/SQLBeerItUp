@@ -67,6 +67,9 @@ kitchenRouter.route('/:id/beverages/transaction-accepted/:uId')
 
 kitchenRouter.route('/:id/beverages/stock/all/:type')
 .get(beverageController.getBeveragesInStock)
+kitchenRouter.route('/:id/beverages/all/:type')
+.get(beverageController.getBeverageTypes)
+
 
 kitchenRouter.route('/:id/beverages/stock/specific/:beverageId')
 .get(beverageController.getSpecificBeverage)
@@ -75,8 +78,6 @@ kitchenRouter.route('/:id/beverages')
 .get(beverageController.getBeverages)
 .post(beverageController.addBeverages)
 
-kitchenRouter.route('/:id/beverages/all/:type')
-.get(beverageController.getBeverageTypes)
 
 
 

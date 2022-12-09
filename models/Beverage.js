@@ -30,7 +30,7 @@ const Beverage = db.define('Beverage', {
     },
     beverageDrinkerId: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     settleDate: {
         type: DataTypes.DATE,

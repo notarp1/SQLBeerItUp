@@ -55,7 +55,7 @@ CREATE TABLE if not exists KitchenUsers
       pictureUrl varchar(50) NOT NULL,
 
       
-     FOREIGN KEY (kId) REFERENCES Kitchens(id)
+     FOREIGN KEY (kId) REFERENCES Kitchens(id) ON DELETE CASCADE
       
 );
 
@@ -73,7 +73,7 @@ CREATE TABLE if not exists Beverages
     settleDate DATETIME,
 
     
-    FOREIGN KEY (kitchenId) REFERENCES Kitchens(id) 
+    FOREIGN KEY (kitchenId) REFERENCES Kitchens(id) ON DELETE CASCADE
 )
 
 

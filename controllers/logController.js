@@ -29,7 +29,7 @@ exports.added = async function (req, res){
 
         res.status(200).json(list)
     } catch (error) {
-        sendErrorCode(error, res);
+        handleError(error, res);
     }
   
 }
@@ -55,7 +55,7 @@ exports.consumed = async function (req, res){
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
         res.status(200).json(list)
     } catch (error) {
-        sendErrorCode(error, res);
+        handleError(error, res);
 
     }
   
@@ -82,7 +82,7 @@ exports.bought = async function (req, res){
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
         res.status(200).json(list)
     } catch (error) {
-        sendErrorCode(error, res);
+        handleError(error, res);
     } 
 }
 exports.sold = async function (req, res){
@@ -99,13 +99,12 @@ exports.sold = async function (req, res){
         `JOIN  BeverageTypes bevTypes ON  bevs.beverageTypeId = bevTypes.id ` +
         `WHERE bevs.beverageOwnerId = '${userId}' AND bevs.beverageDrinkerId != '${userId}' AND settleDate is not NULL ` +
         `GROUP BY bevs.settleDate ` +
-        `ORDER BY bevs.settleDate DESC 
-         LIMIT 4 `
+        `ORDER BY bevs.settleDate DESC`
 
         var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
         res.status(200).json(list)
     } catch (error) {
-        sendErrorCode(error, res);
+        handleError(error, res);
     } 
 }
 
@@ -136,7 +135,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       res.status(200).json(list)
   
     } catch (error) {
-      sendErrorCode(error, res);
+      handleError(error, res);
     }
     
   
@@ -174,27 +173,28 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       res.status(200).json(list)
   
     } catch (error) {
-
-      sendErrorCode(error, res);
+      handleError(error, res);
     }
     
   
   }
 
 
-function sendErrorCode(e, res) {
-    console.log(e)
+
+
+  function handleError(e, res) {
     switch (e.name) {
         case "SequelizeUniqueConstraintError":
             res.status(409).send(e);
             break;
         case "SequelizeDatabaseError":
-            res.status(409).send(e);
+            res.status(500).send(e);
             break;
         case "SequelizeValidationError":
-            res.status(409).send(e);
+            res.status(500).send(e);
             break;
         default:
-            res.status(400).send(e);
+            res.status(500).send(e);
+            break;
     }
 }

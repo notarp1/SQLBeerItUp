@@ -13,7 +13,7 @@ async function getBeverageId(name, kId) {
     });
     return type.id;
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 }
 
@@ -37,7 +37,7 @@ exports.calculateMoneyUserIsOwed = async function (req, res) {
       
       
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
@@ -52,7 +52,7 @@ exports.calculateMoneyUserOwes = async function (req, res) {
       res.status(200).json(moneyOwes)
 
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
@@ -85,7 +85,7 @@ exports.makePayment = async function (req, res){
 
   } catch (error) {
     console.log(error)
-    sendErrorCode(error, res);
+    handleError(error, res);
 
   }
 }
@@ -119,44 +119,35 @@ exports.calculateBeverageCostSequential = async function (req, res) {
 
     res.status(200).json({ price: price, beverages: beveragesToSend });
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
 /*When choosing a beverage and accepting it*/
+
 exports.onBeverageTransactionAccept = async function (req, res) {
   try {
     var listOfObjectsToUpdate = req.body;
     var userId = req.params.uId;
 
-
-
-   
     var dateTime = new Date();
     listOfObjectsToUpdate.forEach((element) => {
       element.removedAt = dateTime;
       element.beverageDrinkerId = userId;
-      console.log(userId)
-      console.log(element.beverageOwnerId)
+      
       if(userId == element.beverageOwnerId){
-        element.settleDate = dateTime
-        console.log("settled!")
+        element.settleDate = dateTime   
       }
-
-    });
-
+    })
 
     await Beverage.bulkCreate(listOfObjectsToUpdate, {
       updateOnDuplicate: ["removedAt", "beverageDrinkerId", "settleDate"],
-    });
-    console.log(listOfObjectsToUpdate);
-
+    })
     res.status(200).send(true);
   } catch (error) {
-    console.log(error);
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
-};
+}
 
 exports.getBeverageTypes = async function (req, res) {
   try {
@@ -166,7 +157,7 @@ exports.getBeverageTypes = async function (req, res) {
 
     res.status(200).json(beverages);
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
@@ -187,7 +178,7 @@ exports.getBeveragesInStock = async function (req, res) {
 
     res.status(200).json(stock);
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
@@ -208,7 +199,7 @@ exports.getBeverages = async function (req, res) {
 
     res.status(200).json(beverages);
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
@@ -225,7 +216,7 @@ exports.getSpecificBeverage = async function (req, res) {
 
     res.status(200).json(beerlist);
   } catch (error) {
-    sendErrorCode(error, res);
+    handleError(error, res);
   }
 };
 
@@ -260,22 +251,25 @@ exports.addBeverages = async function (req, res) {
 
     res.status(200).send(true);
   } catch (e) {
-    sendErrorCode(e, res);
+    handleError(e, res);
   }
 };
 
-function sendErrorCode(e, res) {
+
+function handleError(e, res) {
   switch (e.name) {
-    case "SequelizeUniqueConstraintError":
-      res.status(409).send(e);
-      break;
-    case "SequelizeDatabaseError":
-      res.status(409).send(e);
-      break;
-    case "SequelizeValidationError":
-      res.status(409).send(e);
-      break;
-    default:
-      res.status(400).send(e);
+      case "SequelizeUniqueConstraintError":
+          res.status(409).send(e);
+          break;
+      case "SequelizeDatabaseError":
+          res.status(500).send(e);
+          break;
+      case "SequelizeValidationError":
+          res.status(500).send(e);
+          break;
+      default:
+          res.status(500).send(e);
+          break;
   }
-}
+};
+

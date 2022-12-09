@@ -14,7 +14,7 @@ exports.addItemToCart = async function (req, res) {
   
   }catch(e){
     console.log(e)
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 }
 
@@ -37,7 +37,7 @@ exports.updateCartItem = async function (req, res) {
   
   }catch(e){
     console.log(e)
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 }
 
@@ -63,21 +63,24 @@ exports.getAllItems = async function (req, res) {
     
     }catch(e){
       console.log(e)
-      handleDatabaseError(e, res);
+      handleError(e, res);
     }
   }
   
 
-function sendErrorCode(e, res) {
+  function handleError(e, res) {
     switch (e.name) {
         case "SequelizeUniqueConstraintError":
             res.status(409).send(e);
             break;
         case "SequelizeDatabaseError":
-            res.status(409).send(e);
+            res.status(500).send(e);
+            break;
+        case "SequelizeValidationError":
+            res.status(500).send(e);
             break;
         default:
-            res.status(400).send(e);
+            res.status(500).send(e);
             break;
     }
 }

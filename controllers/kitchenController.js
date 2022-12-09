@@ -28,7 +28,7 @@ exports.isAdmin = async function (req, res){
 
 
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 }
 
@@ -48,13 +48,21 @@ exports.isTheOnlyAdminSpecific = async function (req, res){
 
 
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 }
 exports.createKitchen = async function (req, res) {
   try {
     
-    
+    var kPin = req.body.kPin.toString()
+    if(kPin.length != 4){
+      res.status(401).send({message: kPin});
+      return
+    }
+    if (kPin[0] =="0"){
+      res.status(401).send({message: "PIN cannot start with a 0"});
+      return
+    }
     var kitchen = await Kitchens.create(req.body)
     kitchen.name = kitchen.kName.trim()
     var beverages = assignBeveragesToKitchen(kitchen.id)
@@ -62,7 +70,7 @@ exports.createKitchen = async function (req, res) {
 
     res.status(201).json(kitchen);
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -75,7 +83,7 @@ exports.addBeverageType = async function (req, res) {
 
     res.status(201).send("Beverage Type Created!");
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -117,7 +125,7 @@ exports.getKitchen = async function (req, res) {
     var kitchen = await Kitchens.findOne({ where: { id: req.params.id } });
     res.status(200).json(kitchen);
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -137,7 +145,7 @@ exports.kitchenAuthentication = async function (req, res){
       }
 
   } catch (e) {
-     handleDatabaseError(e, res);
+     handleError(e, res);
   }
 }
 
@@ -151,7 +159,7 @@ exports.deleteKitchenUser = async function (req, res) {
     console.log("HAWD")
 
 
-    var moneyOwed = await db.query(
+    var moneyOwedList = await db.query(
       `SELECT t1.uName as name, 
       t1.uPhone as phone, 
       t1.id as uId, 
@@ -164,22 +172,19 @@ exports.deleteKitchenUser = async function (req, res) {
       { type: sequelize.QueryTypes.SELECT }
     );
 
-    var moneyOwes = await db.query(
+    var moneyOwesList = await db.query(
       `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${userId}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
 
-    if(moneyOwed.length > 0 || moneyOwes.length > 0){
+    if(moneyOwedList.length > 0 || moneyOwesList.length > 0){
       res.status(409).send({message: "The user has unsettled transactions and cannot be removed!"});
       return
     }
-
-
-  
     await KitchenUser.destroy({where: {kId: id, uId: userId}})
     res.status(200).send("true");
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -200,7 +205,7 @@ exports.giveUserAdminRights = async function (req, res) {
     await KitchenUser.update({isAdmin: kitchenAdmin.value}, {where: {uId: kitchenAdmin.uId}})
     res.status(200).send("true");
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -209,7 +214,7 @@ exports.getAllKitchens = async function (req, res) {
     var kitchens = await Kitchens.findAll();
     res.status(200).json(kitchens);
   } catch (error) {
-    handleDatabaseError(error, res);
+    handleError(error, res);
   }
 };
 
@@ -229,7 +234,7 @@ exports.postKitchenUser = async function (req, res) {
     }
    
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -249,7 +254,7 @@ exports.getKitchenUser = async function (req, res) {
     
     res.status(200).json(users);
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
@@ -274,26 +279,27 @@ exports.getKitchenUsers = async function (req, res) {
     
     res.status(200).json(list);
   } catch (e) {
-    handleDatabaseError(e, res);
+    handleError(e, res);
   }
 };
 
 
 
 
-function handleDatabaseError(e, res) {
+function handleError(e, res) {
   switch (e.name) {
-    case "SequelizeUniqueConstraintError":
-      res.status(409).send({message: e.message});
-      break;
-    case "SequelizeDatabaseError":
-      res.status(409).send(e);
-      break;
-    case "SequelizeValidationError":
-      res.status(409).send(e);
-      break;
-    default:
-      res.status(400).send(e);
+      case "SequelizeUniqueConstraintError":
+          res.status(409).send(e);
+          break;
+      case "SequelizeDatabaseError":
+          res.status(500).send(e);
+          break;
+      case "SequelizeValidationError":
+          res.status(500).send(e);
+          break;
+      default:
+          res.status(500).send(e);
+          break;
   }
 }
 
