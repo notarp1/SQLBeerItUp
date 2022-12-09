@@ -21,6 +21,7 @@ async function getBeverageId(name, kId) {
 exports.calculateMoneyUserIsOwed = async function (req, res) {
   try {
     var beverageOwnerId = req.params.id
+    var kitchenId = req.params.kId
     var moneyOwed = await db.query(
       `SELECT t1.uName as name, 
       t1.uPhone as phone, 
@@ -30,6 +31,7 @@ exports.calculateMoneyUserIsOwed = async function (req, res) {
       JOIN Beverages t2 ON t1.id = t2.beverageDrinkerId  
       WHERE beverageOwnerId = '${beverageOwnerId}'
       AND beverageDrinkerId != '${beverageOwnerId}'
+      AND kitchenId = '${kitchenId}'
       AND removedAt is not NULL AND settleDate is NULL GROUP BY uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
@@ -44,8 +46,16 @@ exports.calculateMoneyUserIsOwed = async function (req, res) {
 exports.calculateMoneyUserOwes = async function (req, res) {
   try {
     var beverageDrinkerId = req.params.id
+    var kitchenId = req.params.kId
     var moneyOwes = await db.query(
-      `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${beverageDrinkerId}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
+      `SELECT t1.uName as name, 
+      t1.uPhone as phone, 
+      t1.id as uId, 
+      SUM(t2.price) as total 
+      FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId 
+      WHERE beverageDrinkerId = '${beverageDrinkerId}' 
+      AND kitchenId = '${kitchenId}'
+      AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
     
@@ -172,7 +182,7 @@ exports.getBeveragesInStock = async function (req, res) {
     }
 
     var stock = await db.query(
-      `SELECT beverageTypeId, t2.beverageName, t2.beverageType, t2.pictureUrl, COUNT(*) as stock FROM Beverages t1 JOIN BeverageTypes t2 ON t1.beverageTypeId = t2.id  WHERE kitchenId = ${kitchenId} AND removedAt IS NULL AND t2.beverageType = "${type}" GROUP BY beverageTypeId`,
+      `SELECT beverageTypeId, t2.beverageName, t2.beverageType, t2.pictureUrl, COUNT(*) as stock FROM Beverages t1 JOIN BeverageTypes t2 ON t1.beverageTypeId = t2.id  WHERE kitchenId = '${kitchenId}' AND removedAt IS NULL AND t2.beverageType = '${type}' GROUP BY beverageTypeId`,
       { type: sequelize.QueryTypes.SELECT }
     );
 
@@ -186,7 +196,7 @@ exports.getBeverages = async function (req, res) {
   try {
     var kitchenId = req.params.id;
 
-    if (kitchenId == -1) {
+    if (kitchenId == "-1") {
       res.status(406).send("Kitchen not found, retrying");
       return;
     }

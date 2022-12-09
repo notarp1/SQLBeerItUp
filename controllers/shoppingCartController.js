@@ -54,7 +54,7 @@ exports.getAllItems = async function (req, res) {
         cart.price,
         u.uPhone as phone,
         u.uName as buyer
-        FROM ShoppingCarts cart LEFT JOIN Users u ON u.id = cart.buyer WHERE cart.kId = ${req.params.id} 
+        FROM ShoppingCarts cart LEFT JOIN Users u ON u.id = cart.buyer WHERE cart.kId = '${req.params.id}'
         ORDER BY cart.createdAt DESC`,
         { type: sequelize.QueryTypes.SELECT }
       );

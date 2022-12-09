@@ -53,23 +53,25 @@ exports.isTheOnlyAdminSpecific = async function (req, res){
 }
 exports.createKitchen = async function (req, res) {
   try {
+
+    var kitchenToCreate = req.body
     
-    var kPin = req.body.kPin.toString()
-    if(kPin.length != 4){
-      res.status(401).send({message: kPin});
+    kitchenToCreate.id = Date.now() + "c"
+
+
+    if(kitchenToCreate.kPin.length != 4){
+      res.status(401).send({message: "Something went wrong"});
       return
     }
-    if (kPin[0] =="0"){
-      res.status(401).send({message: "PIN cannot start with a 0"});
-      return
-    }
-    var kitchen = await Kitchens.create(req.body)
-    kitchen.name = kitchen.kName.trim()
+  
+    var kitchen = await Kitchens.create(kitchenToCreate)
+    
     var beverages = assignBeveragesToKitchen(kitchen.id)
     await BeverageType.bulkCreate(beverages);
 
-    res.status(201).json(kitchen);
+    res.status(201).send(kitchen);
   } catch (e) {
+    console.log(e)
     handleError(e, res);
   }
 };
@@ -90,12 +92,14 @@ exports.addBeverageType = async function (req, res) {
 
 exports.isKitchenNameAvailable = async function (req, res){
   try {
+    
       var kitchenList = await Kitchens.findAll({where: {kName: req.params.name}})
     
       if(kitchenList.length > 0) res.status(409).send("false");
       else res.status(200).send("true");;
+   
   } catch (e) {
-      console.log(e.code)
+      console.log(e)
       res.status(400).send(e);
   }
 }
@@ -272,7 +276,7 @@ exports.getKitchenUsers = async function (req, res) {
         FROM KitchenUsers kitchenUser 
         JOIN Users u 
         ON u.id = kitchenUser.uId 
-        WHERE kitchenUser.kId = ${id}`
+        WHERE kitchenUser.kId = '${id}'`
 
     var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
 

@@ -6,8 +6,8 @@ const ShoppingCartEntry = db.define('ShoppingCart', {
     // Model attributes are defined here
     
     kId: {
-        type: Int,
-        allowNull: false
+      type: DataTypes.STRING,
+      allowNull: false
     },
     itemdesc: {
       type: DataTypes.STRING,

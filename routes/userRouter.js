@@ -40,10 +40,10 @@ userRouter.route('/:id')
 userRouter.route('/:id/:kId')
 .delete(userController.deleteUserAndKitchen)
 
-userRouter.route('/:id/owed')
+userRouter.route('/:id/owed/:kId')
 .get(beverageController.calculateMoneyUserIsOwed)
 
-userRouter.route('/:id/owes')
+userRouter.route('/:id/owes/:kId')
 .get(beverageController.calculateMoneyUserOwes)
 
 userRouter.route('/:id/pay/:recipient')

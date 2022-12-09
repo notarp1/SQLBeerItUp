@@ -5,16 +5,16 @@ CREATE TABLE if not exists Users
     id varchar(255) NOT NULL PRIMARY KEY, 
     uName varchar(30) NOT NULL,
     uPhone varchar(20) UNIQUE NOT NULL,
-    uPin INT NOT NULL,
+    uPin varchar(4) NOT NULL,
     createdAt DATETIME
 );
 
 
 
 CREATE Table if not exists Kitchens(
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id varchar(255) NOT NULL PRIMARY KEY,
     kName varchar(50) UNIQUE NOT NULL, 
-    kPin INT NOT NULL,
+    kPin varchar(4) NOT NULL,
     createdAt DATETIME
 );
 
@@ -22,7 +22,7 @@ CREATE Table if not exists Kitchens(
 CREATE TABLE if not exists ShoppingCarts
 (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    kId INT NOT NULL,
+    kId varchar(255) NOT NULL,
     itemdesc varchar(25) NOT NULL,
     createdAt DATETIME NOT NULL,
     removedAt DATETIME,
@@ -37,7 +37,7 @@ CREATE TABLE if not exists ShoppingCarts
 CREATE TABLE if not exists KitchenUsers
 (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    kId INT NOT NULL,
+    kId varchar(255) NOT NULL,
     uId varchar(255) NOT NULL,
     isAdmin TINYINT NOT NULL,
     createdAt DATETIME,
@@ -49,7 +49,7 @@ CREATE TABLE if not exists KitchenUsers
 
  CREATE TABLE if not exists BeverageTypes (
       id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-      kId INT NOT NULL,
+      kId varchar(255) NOT NULL,
       beverageName varchar(50) NOT NULL, 
       beverageType varchar(10) NOT NULL,
       pictureUrl varchar(50) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE if not exists Beverages
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     beverageTypeId INT NOT NULL,
     price INT NOT NULL,
-    kitchenId INT NOT NULL,
+    kitchenId varchar(255) NOT NULL,
     beverageOwnerId varchar(250) NOT NULL,
     createdAt DATETIME NOT NULL,
     removedAt DATETIME,

@@ -6,7 +6,7 @@ const db = require('../config/database')
 const BeverageType = db.define('BeverageType', {
     // Model attributes are defined here
     kId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     beverageName: {

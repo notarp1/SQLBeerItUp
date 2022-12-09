@@ -4,7 +4,7 @@ const db = require('../config/database')
 
 const KitchenUser = db.define('KitchenUsers', {
   kId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false
   },
   uId:{

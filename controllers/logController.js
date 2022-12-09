@@ -120,7 +120,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       SELECT t2.uName as name, 
       COUNT(*) as count 
       FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
-      WHERE kitchenId = ${kId} 
+      WHERE kitchenId = '${kId}'
       and (removedAt  >= '${year}-01-01' AND  removedAt  < '${nextYear}-01-01')
 	  GROUP BY t2.id 
       ORDER BY count DESC`, { type: db.QueryTypes.SELECT })
@@ -160,7 +160,7 @@ exports.calculateYearlyLeaderboard = async function (req, res){
       SELECT t2.uName as name, 
       COUNT(*) as count 
       FROM Beverages t1 JOIN Users t2 ON t1.beverageDrinkerId = t2.id 
-      WHERE kitchenId = ${kId} 
+      WHERE kitchenId = '${kId}'
       and (removedAt  >= '${year}-${month}-01' AND  removedAt  < '${nextYear}-${nextMonth}-01')
 	  GROUP BY t2.id 
       ORDER BY count DESC`, { type: db.QueryTypes.SELECT })

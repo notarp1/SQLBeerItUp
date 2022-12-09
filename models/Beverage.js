@@ -13,7 +13,7 @@ const Beverage = db.define('Beverage', {
       allowNull: false
     },
     kitchenId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     beverageOwnerId: {
