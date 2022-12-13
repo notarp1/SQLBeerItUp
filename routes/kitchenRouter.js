@@ -13,6 +13,8 @@ kitchenRouter.route('/')
 
 
 
+
+
 kitchenRouter.route('/auth')
 .post(kitchenController.kitchenAuthentication)
 
@@ -29,11 +31,14 @@ kitchenRouter.route('/:id/beverages/type')
 
 kitchenRouter.route('/:id')
 .get(kitchenController.getKitchen)
+.delete(kitchenController.deleteKitchen)
 
 kitchenRouter.route('/:id/shopping_cart')
-.get(shoppingCartController.getAllItems)
 .post(shoppingCartController.addItemToCart)
 .put(shoppingCartController.updateCartItem)
+
+kitchenRouter.route('/:id/shopping_cart/:year/:month')
+.get(shoppingCartController.getAllItems)
 
 
 

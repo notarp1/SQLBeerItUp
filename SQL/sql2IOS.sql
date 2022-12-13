@@ -73,7 +73,8 @@ CREATE TABLE if not exists Beverages
     settleDate DATETIME,
 
     
-    FOREIGN KEY (kitchenId) REFERENCES Kitchens(id) ON DELETE CASCADE
+    FOREIGN KEY (kitchenId) REFERENCES Kitchens(id) ON DELETE CASCADE,
+    FOREIGN KEY (beverageOwnerId) REFERENCES Users(id) ON DELETE CASCADE
 )
 
 

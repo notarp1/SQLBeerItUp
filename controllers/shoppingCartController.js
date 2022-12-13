@@ -42,7 +42,19 @@ exports.updateCartItem = async function (req, res) {
 }
 
 exports.getAllItems = async function (req, res) {
-    try{      
+    
+  let year = parseInt(req.params.year)
+  let month = parseInt(req.params.month)
+
+  let nextMonth = month + 1
+  let nextYear  = year
+
+  if(nextMonth == 13){
+    nextMonth = 1
+    nextYear = year + 1
+  }
+
+  try{      
       
       var items = await db.query(
         `SELECT 
@@ -55,6 +67,7 @@ exports.getAllItems = async function (req, res) {
         u.uPhone as phone,
         u.uName as buyer
         FROM ShoppingCarts cart LEFT JOIN Users u ON u.id = cart.buyer WHERE cart.kId = '${req.params.id}'
+        AND (cart.createdAt  >= '${year}-${month}-01' AND  cart.createdAt  < '${nextYear}-${nextMonth}-01')
         ORDER BY cart.createdAt DESC`,
         { type: sequelize.QueryTypes.SELECT }
       );

@@ -176,7 +176,7 @@ exports.getBeveragesInStock = async function (req, res) {
     var kitchenId = req.params.id;
     var type = req.params.type
 
-    if (kitchenId == -1) {
+    if (kitchenId == "-1") {
       res.status(406).send("Kitchen not found, retrying");
       return;
     }
@@ -239,7 +239,7 @@ exports.addBeverages = async function (req, res) {
     //var beverageName = req.params.beverage;
     var kitchenId = req.params.id;
 
-    if (kitchenId == -1) {
+    if (kitchenId == "-1") {
       res.status(406).send("Kitchen not found, retrying");
       return;
     }

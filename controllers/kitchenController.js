@@ -7,7 +7,8 @@ const stringHash = require("string-hash");
 const BeverageType = require("../models/BeverageType");
 const sequelize = require("sequelize");
 const User = require("../models/User");
-const ShoppingCart = require("../models/ShoppingCartEntry")
+const ShoppingCart = require("../models/ShoppingCartEntry");
+const { message } = require("prompt");
 
 
 
@@ -15,9 +16,9 @@ const ShoppingCart = require("../models/ShoppingCartEntry")
 exports.isAdmin = async function (req, res){
   try {
     
-    var kId = req.params.id
-    var userId = req.params.uId
-    var user = await KitchenUser.findAll({where: { kId: kId, isAdmin: 1, uId: userId }})
+    let kId = req.params.id
+    let userId = req.params.uId
+    let user = await KitchenUser.findAll({where: { kId: kId, isAdmin: 1, uId: userId }})
 
     if(user.length > 0) {
       res.status(200).json(1)
@@ -35,9 +36,9 @@ exports.isAdmin = async function (req, res){
 exports.isTheOnlyAdminSpecific = async function (req, res){
   try {
     
-    var kId = req.params.id
+    let kId = req.params.id
 
-    var users = await KitchenUser.findAll({where: { kId: kId, isAdmin: 1}})
+    let users = await KitchenUser.findAll({where: { kId: kId, isAdmin: 1}})
 
     if(users.length > 1) {
       res.status(200).json(0)
@@ -54,7 +55,7 @@ exports.isTheOnlyAdminSpecific = async function (req, res){
 exports.createKitchen = async function (req, res) {
   try {
 
-    var kitchenToCreate = req.body
+    let kitchenToCreate = req.body
     
     kitchenToCreate.id = Date.now() + "c"
 
@@ -64,9 +65,9 @@ exports.createKitchen = async function (req, res) {
       return
     }
   
-    var kitchen = await Kitchens.create(kitchenToCreate)
+    let kitchen = await Kitchens.create(kitchenToCreate)
     
-    var beverages = assignBeveragesToKitchen(kitchen.id)
+    let beverages = assignBeveragesToKitchen(kitchen.id)
     await BeverageType.bulkCreate(beverages);
 
     res.status(201).send(kitchen);
@@ -76,10 +77,27 @@ exports.createKitchen = async function (req, res) {
   }
 };
 
+
+exports.deleteKitchen = async function (req, res) {
+  try {
+
+    let id = req.params.id
+
+    await Kitchens.destroy({where: {id: id}})
+
+
+  
+    res.status(201).send("deleted");
+  } catch (e) {
+    console.log(e)
+    handleError(e, res);
+  }
+};
+
 exports.addBeverageType = async function (req, res) {
   try {
     
-    var bevType = req.body
+    let bevType = req.body
   
     await BeverageType.create(bevType);
 
@@ -93,7 +111,7 @@ exports.addBeverageType = async function (req, res) {
 exports.isKitchenNameAvailable = async function (req, res){
   try {
     
-      var kitchenList = await Kitchens.findAll({where: {kName: req.params.name}})
+      let kitchenList = await Kitchens.findAll({where: {kName: req.params.name}})
     
       if(kitchenList.length > 0) res.status(409).send("false");
       else res.status(200).send("true");;
@@ -107,12 +125,12 @@ exports.isKitchenNameAvailable = async function (req, res){
 
 exports.login = async function (req, res) {
   try {
-    var kitchen = req.body;
+    let body = req.body;
 
-    var pass = kitchen.kPass;
-    var hashedPass = stringHash(pass);
+    let pass = body.kPass;
+    let hashedPass = stringHash(pass);
 
-    var kitchen = await Kitchens.findOne({ where: { kName: kitchen.kName } });
+    let kitchen = await Kitchens.findOne({ where: { kName: kitchen.kName } });
 
     if (kitchen.kPass == hashedPass) {
       res.status(200).json(kitchen);
@@ -126,7 +144,7 @@ exports.login = async function (req, res) {
 
 exports.getKitchen = async function (req, res) {
   try {
-    var kitchen = await Kitchens.findOne({ where: { id: req.params.id } });
+    let kitchen = await Kitchens.findOne({ where: { id: req.params.id } });
     res.status(200).json(kitchen);
   } catch (e) {
     handleError(e, res);
@@ -137,8 +155,8 @@ exports.getKitchen = async function (req, res) {
 exports.kitchenAuthentication = async function (req, res){
 
   try {
-      var kitchenAuthObject = req.body
-      var kitchen = await Kitchens.findOne({where: {kName: kitchenAuthObject.kName.trim()}})
+      let kitchenAuthObject = req.body
+      let kitchen = await Kitchens.findOne({where: {kName: kitchenAuthObject.kName.trim()}})
       
 
       if(kitchen.kPin == kitchenAuthObject.kPin){
@@ -157,13 +175,13 @@ exports.kitchenAuthentication = async function (req, res){
 
 exports.deleteKitchenUser = async function (req, res) {
   try {
-    var id = req.params.id
-    var userId = req.params.uId
+    let id = req.params.id
+    let userId = req.params.uId
 
     console.log("HAWD")
 
 
-    var moneyOwedList = await db.query(
+    let moneyOwedList = await db.query(
       `SELECT t1.uName as name, 
       t1.uPhone as phone, 
       t1.id as uId, 
@@ -176,7 +194,7 @@ exports.deleteKitchenUser = async function (req, res) {
       { type: sequelize.QueryTypes.SELECT }
     );
 
-    var moneyOwesList = await db.query(
+    let moneyOwesList = await db.query(
       `SELECT t1.uName as name, t1.uPhone as phone, t1.id as uId, SUM(t2.price) as total FROM Users t1  JOIN Beverages t2 ON t1.id = t2.beverageOwnerId WHERE beverageDrinkerId = '${userId}' AND removedAt is not NULL AND settleDate is NULL GROUP BY t1.uName`,
       { type: sequelize.QueryTypes.SELECT }
     );
@@ -194,11 +212,11 @@ exports.deleteKitchenUser = async function (req, res) {
 
 exports.giveUserAdminRights = async function (req, res) {
   try {
-    var kitchenAdmin = req.body
+    let kitchenAdmin = req.body
 
     if(kitchenAdmin.value == false){
 
-      var list = await KitchenUser.findAll({where: {kId: kitchenAdmin.kId, isAdmin: true}})
+      let list = await KitchenUser.findAll({where: {kId: kitchenAdmin.kId, isAdmin: true}})
     
       if(list.length == 1){
         res.status(409).send({message: "At least one person must be admin"});
@@ -215,7 +233,7 @@ exports.giveUserAdminRights = async function (req, res) {
 
 exports.getAllKitchens = async function (req, res) {
   try {
-    var kitchens = await Kitchens.findAll();
+    let kitchens = await Kitchens.findAll();
     res.status(200).json(kitchens);
   } catch (error) {
     handleError(error, res);
@@ -226,12 +244,12 @@ exports.postKitchenUser = async function (req, res) {
   try {
     console.log(req.body)
 
-    var kitchenUser = req.body
-    var user = await KitchenUser.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
+    let kitchenUser = req.body
+    let user = await KitchenUser.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
     
     if(user == null){
-      await KitchenUser.create(kitchenUser);
-      res.status(201).send("true");
+      let obj = await KitchenUser.create(kitchenUser);
+      res.status(201).send(obj);
     } else {
     
       res.status(400).send(Error("User already exists"));
@@ -247,17 +265,27 @@ exports.postKitchenUser = async function (req, res) {
 exports.getKitchenUser = async function (req, res) {
   try {
     
-    var kitchen = await Kitchens.findOne({where: {id: req.params.id}})
- 
-    if(kitchen == null){
-      res.status(404).send({message: "Kitchen Does Not Exist"})
+  
+    let queryString = 
+    `SELECT 
+    kitchenUser.uId as id, 
+    u.uName as uName,
+    u.uPhone as phone,
+    kitchenUser.isAdmin
+    FROM KitchenUsers kitchenUser 
+    JOIN Users u 
+    ON u.id = kitchenUser.uId 
+    WHERE kitchenUser.kId = '${req.params.id}' AND kitchenUser.uId = '${req.params.uId}' `
+    
+   
+    let user = await db.query(queryString, { type: db.QueryTypes.SELECT })
+    if(user == null){
+      res.status(404).send({message: "Wrong password"});
       return
     }
-    
-    var users = await KitchenUser.findOne({where: {id: req.params.uId}})
-    
-    res.status(200).json(users);
+    res.status(200).send(user[0]);
   } catch (e) {
+    console.log(e)
     handleError(e, res);
   }
 };
@@ -272,13 +300,14 @@ exports.getKitchenUsers = async function (req, res) {
         `SELECT 
         kitchenUser.uId as id, 
         u.uName as uName,
-        u.uPhone as phone
+        u.uPhone as phone,
+        kitchenUser.isAdmin
         FROM KitchenUsers kitchenUser 
         JOIN Users u 
         ON u.id = kitchenUser.uId 
         WHERE kitchenUser.kId = '${id}'`
 
-    var list = await db.query(queryString, { type: db.QueryTypes.SELECT })
+    let list = await db.query(queryString, { type: db.QueryTypes.SELECT })
 
     
     res.status(200).json(list);
