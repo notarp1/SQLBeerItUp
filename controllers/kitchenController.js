@@ -248,8 +248,8 @@ exports.postKitchenUser = async function (req, res) {
     let user = await KitchenUser.findOne({where: {kId: kitchenUser.kId, uId: kitchenUser.uId}, type: sequelize.QueryTypes.SELECT })
     
     if(user == null){
-      let obj = await KitchenUser.create(kitchenUser);
-      res.status(201).send(obj);
+      await KitchenUser.create(kitchenUser);
+      res.status(201).send("true");
     } else {
     
       res.status(400).send(Error("User already exists"));
