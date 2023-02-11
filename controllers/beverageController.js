@@ -141,6 +141,8 @@ exports.onBeverageTransactionAccept = async function (req, res) {
     var userId = req.params.uId;
 
     var dateTime = new Date();
+
+  
     listOfObjectsToUpdate.forEach((element) => {
       element.removedAt = dateTime;
       element.beverageDrinkerId = userId;
@@ -149,6 +151,7 @@ exports.onBeverageTransactionAccept = async function (req, res) {
         element.settleDate = dateTime   
       }
     })
+
 
     await Beverage.bulkCreate(listOfObjectsToUpdate, {
       updateOnDuplicate: ["removedAt", "beverageDrinkerId", "settleDate"],

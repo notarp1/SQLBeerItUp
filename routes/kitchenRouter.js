@@ -11,17 +11,11 @@ kitchenRouter.route('/')
 .get(kitchenController.getAllKitchens)
 .post(kitchenController.createKitchen)
 
-
-
-
-
 kitchenRouter.route('/auth')
 .post(kitchenController.kitchenAuthentication)
 
 kitchenRouter.route('/name_check/:name')
 .get(kitchenController.isKitchenNameAvailable)
-
-
 
 kitchenRouter.route('/login')
 .post(kitchenController.login)
@@ -82,6 +76,8 @@ kitchenRouter.route('/:id/beverages/stock/specific/:beverageId')
 kitchenRouter.route('/:id/beverages')
 .get(beverageController.getBeverages)
 .post(beverageController.addBeverages)
+
+
 
 
 
