@@ -101,7 +101,7 @@ exports.addBeverageType = async function (req, res) {
   
     await BeverageType.create(bevType);
 
-    res.status(201).send("Beverage Type Created!");
+    res.status(201).json("Beverage Type Created!");
   } catch (e) {
     handleError(e, res);
   }
@@ -153,19 +153,16 @@ exports.getKitchen = async function (req, res) {
 
 
 exports.kitchenAuthentication = async function (req, res){
-
   try {
       let kitchenAuthObject = req.body
-      let kitchen = await Kitchens.findOne({where: {kName: kitchenAuthObject.kName.trim()}})
-      
-
+      let kitchen = await Kitchens.findOne({
+        where: {kName: kitchenAuthObject.kName.trim()}
+      })
       if(kitchen.kPin == kitchenAuthObject.kPin){
         res.status(200).json(kitchen);
-
       } else {
         res.status(401).send({message: "Wrong password"});
       }
-
   } catch (e) {
      handleError(e, res);
   }
@@ -178,7 +175,6 @@ exports.deleteKitchenUser = async function (req, res) {
     let id = req.params.id
     let userId = req.params.uId
 
-    console.log("HAWD")
 
 
     let moneyOwedList = await db.query(

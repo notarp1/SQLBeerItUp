@@ -7,6 +7,7 @@ const KitchenUsers = require('../models/KitchenUser');
 const sequelize = require("sequelize");
 
 const KitchenUser = require("../models/KitchenUser");
+const Beverage = require('../models/Beverage');
 
 
 exports.isAdminOnKitchens = async function (req, res){
@@ -246,6 +247,27 @@ exports.getUser = async function (req, res) {
     }
 }
 
+exports.addFakes = async function (req, res) {
+    try {
+  
+        var n = req.params.n
+    
+        var object = req.body
+        var list = new Array()
+
+        for (let i = 0; i < n; i++) {
+            list.push(object)
+          }
+        await Beverage.bulkCreate(list);
+    
+
+
+        res.status(201).send("syccces");
+        } catch (e) {
+        console.log(e)
+        handleError(e, res);
+        }
+  };
 
 function handleError(e, res) {
     switch (e.name) {

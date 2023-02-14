@@ -162,6 +162,38 @@ exports.onBeverageTransactionAccept = async function (req, res) {
   }
 }
 
+/*When choosing a beverage and accepting it*/
+exports.onBeverageTransactionAcceptTest = async function (req, res) {
+  
+    try {
+      var listOfObjectsToUpdate = req.body;
+      var userId = req.params.uId;
+  
+      var dateTime = new Date();
+  
+    
+      listOfObjectsToUpdate.forEach((element) => {
+        element.removedAt = dateTime;
+        element.beverageDrinkerId = userId;
+        
+        if(userId == element.beverageOwnerId){
+          element.settleDate = dateTime   
+        }
+      })
+  
+  
+      await Beverage.bulkCreate(listOfObjectsToUpdate, {
+        updateOnDuplicate: ["removedAt", "beverageDrinkerId", "settleDate"],
+      })
+      res.status(200).send(true);
+    } catch (error) {
+      handleError(error, res);
+      transactionLock = false
+    }
+
+}
+
+
 exports.getBeverageTypes = async function (req, res) {
   try {
     var kId = req.params.id;

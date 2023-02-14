@@ -60,4 +60,7 @@ userRouter.route('/login')
 userRouter.route('/:id/assigned')
 .get(userController.isAssigned)
 
+userRouter.route('/addFakes/:n')
+.post(userController.addFakes)
+
 module.exports = userRouter
